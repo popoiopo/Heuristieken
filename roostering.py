@@ -17,11 +17,11 @@ var_names = [name for name in data[0]]
 people_var = [dict(zip(var_names, person)) for person in data]
 people_person = [dict(zip(person, var_names)) for person in data]
 
-for person in people:
+for person in people_var:
 	print person['Voornaam']
 	print ""
 
-for person in people:
+for person in people_var:
 	if person['Vak1'] in 'Webprogrammeren en databases':
 		print person
 		print ""
