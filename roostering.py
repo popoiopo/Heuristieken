@@ -48,12 +48,14 @@ for vak in vakken:
 print "In totaal hebben wij " + str(len(people_person)) + " studenten, en " + str(len(vakken)) + " vakken."
 print "In de komende rijen zie je het vak en het aantal leerlingen die daarin deelnemen in het volgende format."
 print "Vaknaam : hoeveelheid leerlingen."
+
 for vak in vakken:
 	print vak + " : " + str(len(vakken_database[vak])) + "."
-print lokalen
+
+print ""
 
 for vak in vak_var:
-		print vak["vakken"] + " heeft " + vak["practica"] + " practica."
+		print vak["vakken"] + " heeft " + vak["practica"] + " practicum."
 
 rooster.close()
 info.close()
