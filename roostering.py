@@ -64,7 +64,7 @@ for vak in vakken_database:
 		print student
 '''
 
-print vakken_database
+print (vakken_database)
 
 rooster.close()
 info.close()
