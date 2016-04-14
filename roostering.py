@@ -52,6 +52,7 @@ print "Vaknaam : hoeveelheid leerlingen."
 for vak in vak_var:
 		print vak["vakken"] + " heeft " + vak["werkcolleges"] + " werkcolleges."
 
+
 for vak in vakken:
 	print vak + " : " + str(len(vakken_database[vak])) + "."
 	print vakken_database[vak]
