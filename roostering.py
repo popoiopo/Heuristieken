@@ -44,18 +44,27 @@ for vak in vakken:
 		if vak in person:
 			vakken_database.setdefault(vak, []).append(person)
 
+"""
 # Info printen!
 print "In totaal hebben wij " + str(len(people_person)) + " studenten, en " + str(len(vakken)) + " vakken."
 print "In de komende rijen zie je het vak en het aantal leerlingen die daarin deelnemen in het volgende format."
 print "Vaknaam : hoeveelheid leerlingen."
+for vak in vak_var:
+		print vak["vakken"] + " heeft " + vak["werkcolleges"] + " werkcolleges."
 
 for vak in vakken:
 	print vak + " : " + str(len(vakken_database[vak])) + "."
+	print vakken_database[vak]
+"""
+'''
+for vak in vakken_database:
+	print vak
+	print "---------------------------------------------"
+	for student in vakken_database[vak]:
+		print student
+'''
 
-print ""
-
-for vak in vak_var:
-		print vak["vakken"] + " heeft " + vak["practica"] + " practicum."
+print vakken_database
 
 rooster.close()
 info.close()
