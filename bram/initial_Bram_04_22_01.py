@@ -39,10 +39,8 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit","Analyse
 "Project_Genetic_Algorithms","Project_Numerical_Recipes","Reflectie_op_de_digitale_cultuur","Software_engineering",
 "Technology_for_games","Webprogrammeren_en_databases","Zoeken_sturen_en_bewegen"]
 
-#list van dict met vakken en studentnummers die t vak volgen
-
-
 #Maak een leeg rooster van dicts in volgorde dag->tijdslot->lokalen
+#Toe te voegen; Dict met key vak en values studNrs van studenten uit vak/werkgroep
 week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
 tijdslots = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00', '17.00-19.00']
 lijst = [0,1,2,3]
@@ -54,25 +52,47 @@ for dag in week:
 		for lok in lokalen_info:
 			rooster[dag][(tijdsl)][lok] = {} #voeg dict met studenten toe
 
-#Maak dict van vak tegen string van achternamen van leerlingen die 't volgen
-subject_student_database = {} #zie regel 47
+#Maak dict van vak tegen string van student nummers van leerlingen die 't volgen
+subject_student_database = {}
+for subject in all_subject_names:
+	for student in student_info:
+		nummer = student['Stud.Nr.']
+		for info in info_student:
+			if nummer in info:
+				if subject in info:
+					subject_student_database.setdefault(subject, []).append(nummer)
+#student_database)
+
 #Maak dict van vak tegen aantal leerlingen dat 't volgt (en omgekeerd)
 subject_student_number = {} #zie regel 56
 number_student_subject = {} #zie regel 56
-
-for subject in all_subject_names:
-	for student in student_info:
-		naam = student['Stud.Nr.']
-		for info in info_student:
-			if naam in info:
-				if subject in info:
-					subject_student_database.setdefault(subject, []).append(naam)
-
 #Check hoeveel studenten er een vak volgen door len van dict[StudNr.] te geven
 for check in all_subject_names:
 	y = len(subject_student_database[check])
 	subject_student_number.setdefault(check, y)
 	number_student_subject.setdefault(y, check)
+
+percentage_werkgroep_grootte = 0.20
+group_student_database = {}
+for vak in all_subject_names:
+	college_type = aantalcollegesinweek(vak_info, vak)
+	print(college_type)
+	"""
+	if vak_info["vakken"] == vak:
+		print(vak_info)
+		print(vak_info["hoorcolleges"])
+		p = vak_info["hoorcolleges"]
+		y = int(p)
+		print(y) 
+		hc = int(vak_info["hoorcolleges"])
+		for i in range(1,hc):
+			vak_naam = "hc_" + str(i) + "_" + vak
+			group_student_database.setdefault(vak_naam, []).append(subject_student_database[vak])
+print(group_student_database)		
+
+"""
+
+		#word[1:]
 
 
 ##------------------------------FUNCTIES----------------------------##
@@ -87,8 +107,8 @@ def aantalcollegesinweek(vakinfo, vak):
 			wc = float(info["werkcolleges"])
 			pr = float(info["practica"])
 			total = hc + wc + pr
-			return total
-
+			#return {'hc': hc, 'wc': wc, 'pr': pr, 'tot':total}
+			return {hc,wc,pr}
 #Geeft aantal beschikbare dagen volgens bonus regeling
 #input is aantal x college in de week
 def bonusdageninweek(aantalx):
