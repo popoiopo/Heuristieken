@@ -26,11 +26,11 @@ header_vakken 		= [name for name in data_vakken[0]] #previous var_info
 # Maak dict van type data tegen details student/vak
 student_info 	= [dict(zip(header_studenten, check)) for check in data_studenten]
 vak_info	 	= [dict(zip(header_vakken, check)) for check in data_vakken]
-lokalen_info 	= [{"A1.04" : 41}, {"A1.06" : 22}, {"A1.08" : 20}, {"A1.10" : 56}, {"B0.201" : 48}, {"C0.110" : 117}, {"C1.112" : 60}]
+lokalen_info 	= {"A1.04" : 41, "A1.06" : 22, "A1.08" : 20, "A1.10" : 56, "B0.201" : 48, "C0.110" : 117, "C1.112" : 60}
 # Maak dict van student/vak/lokalen tegen details
 info_student 	= [dict(zip(check, header_studenten)) for check in data_studenten]
 info_vak	 	= [dict(zip(check, header_vakken)) for check in data_vakken]
-info_lokalen 	= [{41 : "A1.04"}, {22 : "A1.06"}, {20 : "A1.08"}, {56 : "A1.10"}, {48 : "B0.201"}, {117 : "C0.110"}, {60 : "C1.112"}]
+info_lokalen 	= {41 : "A1.04", 22 : "A1.06", 20 : "A1.08", 56 : "A1.10", 48 : "B0.201", 117 : "C0.110", 60 : "C1.112"}
 #Maak dict van vak tegen string van achternamen van leerlingen die 't volgen
 subject_student_database = {} #zie regel 47
 #Maak dict van vak tegen aantal leerlingen dat 't volgt (en omgekeerd)
@@ -46,7 +46,7 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit","Analyse
 
 for subject in all_subject_names:
 	for student in student_info:
-		naam = student['Achternaam']
+		naam = student['Stud.Nr.']
 		for info in info_student:
 			if naam in info:
 				if subject in info:
@@ -56,6 +56,19 @@ for check in all_subject_names:
 	y = len(subject_student_database[check])
 	subject_student_number.setdefault(check, y)
 	number_student_subject.setdefault(y, check)
+
+week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
+tijdslots = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00', '17.00-19.00']
+
+rooster = {}
+for dag in week:
+	rooster[dag] = {}
+	for lok in lokalen_info:
+		rooster[dag][lok] = {}
+		for tijdsl in tijdslots:
+			rooster[dag][lok][(tijdsl)] = 0
+print(rooster)
+print(subject_student_number)
 
 
 ##------------------------------FUNCTIES----------------------------##
@@ -83,6 +96,10 @@ def bonusdageninweek(aantalx):
 		return ['ma', 'di', 'wo', 'do', 'vr']
 
 
+
+
+
+"""
 #Loop over vakken, begin bij 't grootste vak
 for number in sorted(subject_student_number.values(), reverse=True):
 	subject = number_student_subject[number]
@@ -101,22 +118,23 @@ for number in sorted(subject_student_number.values(), reverse=True):
 			hc = int(subject_details["hoorcolleges"])
 			wc = int(subject_details["werkcolleges"])
 			pr = int(subject_details["practica"])
-			print(subject)
+#			print(subject)
 			
 			for x in range(0,hc):
-				print(hc)
-				print(number)
-			for x in range(0,wc):
+#				print(hc)
+#				print(number)
+		for x in range(0,wc):
 				wc_max = int(subject_details["werk_max_stud"])
-				print(wc)
+#				print(wc)
+#				print(wc_max)
 				number2 = int(number/wc_max)
-				print(number2)
+#				print(number2)
 			for x in range(0,pr):
 				pr_max = int(subject_details["practica_max_stud"])
-				print(pr)
+#				print(pr)
 				number2 = int(number/pr_max)
-				print(number2)
-
+#				print(number2)
+"""
 
 studenten_roostering.close()
 vakinfo.close()

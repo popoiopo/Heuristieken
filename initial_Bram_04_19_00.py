@@ -21,8 +21,6 @@ data_vakken 		= [row for row in csv_vakken] #previous data_info
 # Neem eerste regel van bestand, geeft info type per kolom
 header_studenten 	= [name for name in data_studenten[0]] #previous people_var
 header_vakken 		= [name for name in data_vakken[0]] #previous var_info
-
-##---------------DICTs met info ---------------------------------------------##
 # Maak dict van type data tegen details student/vak
 student_info 	= [dict(zip(header_studenten, check)) for check in data_studenten]
 vak_info	 	= [dict(zip(header_vakken, check)) for check in data_vakken]
@@ -31,11 +29,6 @@ lokalen_info 	= [{"A1.04" : 41}, {"A1.06" : 22}, {"A1.08" : 20}, {"A1.10" : 56},
 info_student 	= [dict(zip(check, header_studenten)) for check in data_studenten]
 info_vak	 	= [dict(zip(check, header_vakken)) for check in data_vakken]
 info_lokalen 	= [{41 : "A1.04"}, {22 : "A1.06"}, {20 : "A1.08"}, {56 : "A1.10"}, {48 : "B0.201"}, {117 : "C0.110"}, {60 : "C1.112"}]
-#Maak dict van vak tegen string van achternamen van leerlingen die 't volgen
-subject_student_database = {} #zie regel 47
-#Maak dict van vak tegen aantal leerlingen dat 't volgt (en omgekeerd)
-subject_student_number = {} #zie regel 56
-number_student_subject = {} #zie regel 56
 
 all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit","Analysemethoden_en_technieken","Architectuur_en_computerorganisatie",
 "Autonomous_Agents_2","Bioinformatica","Calculus_2","Collectieve_Intelligentie","Compilerbouw","Compilerbouw_practicum","Data_Mining",
@@ -44,78 +37,42 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit","Analyse
 "Project_Genetic_Algorithms","Project_Numerical_Recipes","Reflectie_op_de_digitale_cultuur","Software_engineering",
 "Technology_for_games","Webprogrammeren_en_databases","Zoeken_sturen_en_bewegen"]
 
-for subject in all_subject_names:
-	for student in student_info:
-		naam = student['Achternaam']
-		for info in info_student:
-			if naam in info:
-				if subject in info:
-					subject_student_database.setdefault(subject, []).append(naam)
-
-for check in all_subject_names:
-	y = len(subject_student_database[check])
-	subject_student_number.setdefault(check, y)
-	number_student_subject.setdefault(y, check)
-
-
-##------------------------------FUNCTIES----------------------------##
 #Geeft aantal keer dat vak gegeven wordt per week
 #input is vak_info en naam van vak dat gezocht moet worden
 def aantalcollegesinweek(vakinfo, vak):
 	for info in vakinfo:
 		if info["vakken"] == vak:
-			hc = float(info["hoorcolleges"])
-			wc = float(info["werkcolleges"])
-			pr = float(info["practica"])
-			total = hc + wc + pr
+			hc = info["hoorcolleges"]
+			HC = float(hc)
+			wc = info["werkcolleges"]
+			WC = float(wc)
+			pr = info["practica"]
+			PR = float(pr)
+			total = HC + WC + PR
+			print(vak)
 			return total
 
-#Geeft aantal beschikbare dagen volgens bonus regeling
-#input is aantal x college in de week
-def bonusdageninweek(aantalx):
-	if aantalx == 4:
-		return ['ma', 'di', 'do', 'vr']
-	if aantalx == 3:
-		return ['ma', 'wo', 'vr']
-	if aantalx == 2:
-		return [{'ma', 'di'}, {'do', 'vr'}]
-	else:
-		return ['ma', 'di', 'wo', 'do', 'vr']
+rooster_info = ["vak", "college", "max_student", "dagen"]
+leeg = ["leeg", "leeg", "leeg", "leeg"]
+rooster_mogelijkheden_per_college = [dict(zip(rooster_info, leeg)) for check in all_subject_names]
+#rooster_mogelijkheden_per_college
+print(rooster_mogelijkheden_per_college)
+#for check in all_subject_names:
+#	print(rooster_mogelijkheden_per_college["vak"])
+#	rooster_mogelijkheden_per_college['vak'] = 'check'
+#print(rooster_mogelijkheden_per_college)
 
+# Per vak iedereen opzoeken die het vak gevolgd heeft, 
+# en deze vervolgens toe te voegen database
+vakken_database = {}
+for vak in all_subject_names:
+	print(vak)
+	for person in info_student:
+		print(person)
+		if vak in person:
+			vakken_database.setdefault(vak, []).append(person)
+print(vakken_database)
 
-#Loop over vakken, begin bij 't grootste vak
-for number in sorted(subject_student_number.values(), reverse=True):
-	subject = number_student_subject[number]
-	#Hoe vaak wordt vak gegeven in de week?
-	times_week = int(aantalcollegesinweek(vak_info, subject))
-	#Welke dagen mogen er geroosterd worden volgens bonusregeling
-	possible_days = bonusdageninweek(times_week)
-	#loop over details per vak
-	for subject_details in vak_info:
-		#check of dit het vak is waar je details van wil
-		if subject in subject_details.values():
-			#gebruik details
-			#print(subject_details)
-			# subject is naam van vak
-			#number is aantal studenten
-			hc = int(subject_details["hoorcolleges"])
-			wc = int(subject_details["werkcolleges"])
-			pr = int(subject_details["practica"])
-			print(subject)
-			
-			for x in range(0,hc):
-				print(hc)
-				print(number)
-			for x in range(0,wc):
-				wc_max = int(subject_details["werk_max_stud"])
-				print(wc)
-				number2 = int(number/wc_max)
-				print(number2)
-			for x in range(0,pr):
-				pr_max = int(subject_details["practica_max_stud"])
-				print(pr)
-				number2 = int(number/pr_max)
-				print(number2)
 
 
 studenten_roostering.close()
