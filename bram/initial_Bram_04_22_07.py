@@ -93,9 +93,10 @@ for subject in all_subject_names:
 			##------------------------------------
 			#geef werkcolleges een unieke naam en maak groepen. Voeg die groepen toe aan dict
 			wc = int(subject_details["werkcolleges"])
+			
 			for i in range(1,wc+1):
-				students = subject_student_database1[subject].copy()
 				wc_number = int(1)
+				students = subject_student_database[subject].copy()
 				stud_over_max = float(subject_student_number[subject])/float(subject_details["werk_max_stud"])
 				if (stud_over_max%1.0) > parameter_werkgroep_grootte:
 					wc_number = int(stud_over_max) + 1
@@ -103,13 +104,19 @@ for subject in all_subject_names:
 					wc_number = int(stud_over_max)
 				for j in range(1,wc_number+1): #misschien leuk om dit later als abc op te slaan ipv 123
 					vak_naam = "wc_" + str(i) + "_" + str(j) + "_" + subject
-					print(vak_naam)
-					group = int(float(subject_student_number[subject]+1.0)/wc_number)
-					#x = int(0)
-					group_student_database[vak_naam] = students[0:group]
-					print(subject_student_database1[subject][0:group])
-#----!!!!!!-----hier gaat iets serieus mis, dus daar moet ik nog naar kijken...
-					students[0:group] = []
+#					group_student_database[vak_naam] = {}
+					check = int(subject_student_number[subject]/wc_number)
+#					print(check)
+#					print(subject_student_database[subject])
+#					print(students)
+					for k in range (0,check):
+						if k <= int(len(subject_student_number[subject])):
+							print(vak_naam)
+							group_student_database.setdefault(vak_naam, []).append(students.pop(0))
+#							print(k)
+						print(vak_naam)
+						print(group_student_database[vak_naam])
+
 			##-------------------------
 			##nog niet aan toe gekomen
 			pr = int(subject_details["practica"])
@@ -118,6 +125,8 @@ for subject in all_subject_names:
 				for j in range(1,pr_number+1): #misschien leuk om dit later als abc op te slaan ipv 123
 					vak_naam = "pr_" + str(i) + "_" + str(j) + "_" + subject
 					group_student_database.setdefault(vak_naam, []).append(x)
+
+print(group_student_database)
 
 ##---------------DIT IS OM STRAKS TE CHECKEN OF IK GEEN STUDENTEN KWIJT BEN GERAAKT IN DE INDELING-----------------
 for vak in all_subject_names:
