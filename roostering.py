@@ -67,10 +67,11 @@ for vak in vakken:
 	for ander_vak in vakken:
 		for person in vakken_database[vak]:
 			if person in vakken_database[ander_vak]:
-				print person
 				duplicate_student[vak].setdefault(ander_vak, []).append(person)
 
-#print duplicate_student
+print vakken_database["Calculus_2"]
+
+#print duplicate_student["Calculus_2"]["Compilerbouw"]
 """
 class cfile(file):
     #subclass file to have a more convienient use of writeline
