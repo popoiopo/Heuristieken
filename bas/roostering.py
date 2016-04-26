@@ -44,8 +44,6 @@ for vak in vakken:
 		if vak in person:
 			vakken_database.setdefault(vak, []).append(person)
 
-print vakken_database['Informatie_en_organisatieontwerp']
-
 """
 # Info printen!
 print "In totaal hebben wij " + str(len(people_person)) + " studenten, en " + str(len(vakken)) + " vakken."
@@ -67,12 +65,15 @@ duplicate_student = {}
 for vak in vakken:
 	duplicate_student.setdefault(vak, []).append({})
 
+print duplicate_student
+
 for vak in duplicate_student:
 	for ander_vak in vakken:
 		for person in vakken_database[vak]:
 			if person in vakken_database[ander_vak]:
 				duplicate_student.setdefault(ander_vak, []).append(person)
 
+print duplicate_student
 
 """
 for vak in vakken:

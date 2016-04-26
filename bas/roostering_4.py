@@ -8,18 +8,27 @@ hoeveel mensen er in elke klas zitten etc.
 ##---------------Functies ----------------------------------------------##
 def duplicate_student(rooster):
 	counter_malus = 0
-	for dag in rooster:
-		for tijdslot in rooster[dag]:
-			for zaal in rooster[dag][tijdslot]:
-				for vak in rooster[dag][tijdslot][zaal]:
-					for ander_vak in rooster[dag][tijdslot][zaal]:
-						if vak is not ander_vak:
-							for student in rooster[dag][tijdslot][zaal][vak]:
+	for dag in rooster.keys():
+		for tijdslot in rooster[dag].keys():
+			student_check=[]
+			for zaal in rooster[dag][tijdslot].keys():
+				for vak in rooster[dag][tijdslot][zaal].keys():
+					for student in rooster[dag][tijdslot][zaal][vak]:
+						if student in student_check:
+							counter_malus+=1
+						else:
+							student_check.append(student)
+	return(counter_malus)
+"""
+
 								for ander_student in rooster[dag][tijdslot][zaal][ander_vak]:
 									if student is ander_student:
-										counter_malus += 1
+										if student is not in stud:
+											stud.append(student)
+										else:
+											counter_malus += 1
 	return counter_malus
-
+"""
 ##---------------Parameter waardes ----------------------------------------------##
 #bepaalt hoe vol/leeg de werkgroepen mogen zijn
 parameter_werkgroep_grootte = 0.21 #0.41 en 0.61 zijn ook interessante grenzen
@@ -128,8 +137,8 @@ for subject in all_subject_names:
 					group_student_database[vak_naam] = subject_student_database[subject][x:x+check]
 					x += check
 #					check_nrstud_pr += len(group_student_database[vak_naam])	##voor check of alle studenten zijn ingedeeld
-print('Het aantal te roosteren unieke vakken is:')
-print(len(group_student_database))
+#print('Het aantal te roosteren unieke vakken is:')
+#print(len(group_student_database))
 
 ##-------------------------------KIES RANDOM DAG-TIJDSLOT-LOKAAL IN DE WEEK-----------------------------##
 def roosteren(vak, timetable, gro_stu_dat):
@@ -138,8 +147,6 @@ def roosteren(vak, timetable, gro_stu_dat):
 	room = random.choice(list(lokalen_info.keys()))
 	if not bool(timetable[day][time][room]):
 		timetable[day][time][room][vak] = gro_stu_dat[vak]
-		print(day, time, room)
-		print(rooster[day][time][room])
 	else:
 		roosteren(vak, timetable, gro_stu_dat)
 
@@ -147,6 +154,9 @@ for subject in list(group_student_database.keys()):
 	roosteren(subject, rooster, group_student_database)
 
 ##-----------------------------------VANAF HIER IS HET ROOSTER RANDOM & GELDIG---------------------------##
+
+#print rooster
+print duplicate_student(rooster)
 
 studenten_roostering.close()
 vakinfo.close()

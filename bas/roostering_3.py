@@ -53,11 +53,10 @@ def duplicate_student(rooster):
 			for zaal in rooster[dag][tijdslot]:
 				for vak in rooster[dag][tijdslot][zaal]:
 					for ander_vak in rooster[dag][tijdslot][zaal]:
-						if vak is not ander_vak:
-							for student in rooster[dag][tijdslot][zaal][vak]:
-								for ander_student in rooster[dag][tijdslot][zaal][ander_vak]:
-									if student is ander_student:
-										counter_malus += 1
+						for student in rooster[dag][tijdslot][zaal][vak]:
+							for ander_student in rooster[dag][tijdslot][zaal][ander_vak]:
+								if student is ander_student:
+									counter_malus += 1
 	return counter_malus
 
 #Maak een leeg rooster van dicts in volgorde dag->tijdslot->lokalen
