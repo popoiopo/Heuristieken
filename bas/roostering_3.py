@@ -44,6 +44,22 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit","Analyse
 "Project_Genetic_Algorithms","Project_Numerical_Recipes","Reflectie_op_de_digitale_cultuur","Software_engineering",
 "Technology_for_games","Webprogrammeren_en_databases","Zoeken_sturen_en_bewegen"]
 
+testnaam = ['Advanced_Heuristics',"Algoritmen_en_complexiteit"]
+
+def duplicate_student(rooster):
+	counter_malus = 0
+	for dag in rooster:
+		for tijdslot in rooster[dag]:
+			for zaal in rooster[dag][tijdslot]:
+				for vak in rooster[dag][tijdslot][zaal]:
+					for ander_vak in rooster[dag][tijdslot][zaal]:
+						if vak is not ander_vak:
+							for student in rooster[dag][tijdslot][zaal][vak]:
+								for ander_student in rooster[dag][tijdslot][zaal][ander_vak]:
+									if student is ander_student:	
+										counter_malus += 1
+	return counter_malus
+
 #Maak een leeg rooster van dicts in volgorde dag->tijdslot->lokalen
 #Toe te voegen; Dict met key vak en values studNrs van studenten uit vak/werkgroep
 week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
@@ -55,6 +71,10 @@ for dag in week:
 		rooster[dag][(tijdsl)] = {}
 		for lok in lokalen_info:
 			rooster[dag][(tijdsl)][lok] = {} #voeg dict met studenten toe
+			for vak in testnaam:
+				rooster[dag][(tijdsl)][lok][vak]=[1,298,3,4]
+
+print duplicate_student(rooster)
 
 #Maak dict van vak tegen string van student nummers van leerlingen die 't volgen
 subject_student_database = {}
@@ -86,10 +106,7 @@ for subject in all_subject_names:
 			hc = int(subject_details["hoorcolleges"])
 			for i in range(1,hc+1):
 				vak_naam = "hc_" + str(i) + "_1_" + subject
-				print vak_naam
-				print subject
 				group_student_database[vak_naam] = subject_student_database[subject]
-				print group_student_database[vak_naam]
 
 			#geef werkcolleges een unieke naam en maak groepen. Voeg die groepen toe aan dict
 			wc = int(subject_details["werkcolleges"])
@@ -127,9 +144,6 @@ for subject in all_subject_names:
 					vak_naam = "pr_" + str(i) + "_" + str(j) + "_" + subject
 					group_student_database.setdefault(vak_naam, []).append(x)
 
-
-print group_student_database['wc_1_1_Algoritmen_en_complexiteit']
-
 ##---------------DIT IS OM STRAKS TE CHECKEN OF IK GEEN STUDENTEN KWIJT BEN GERAAKT IN DE INDELING-----------------
 for vak in all_subject_names:
 	for key1, value1 in group_student_database.items():
@@ -147,7 +161,6 @@ for vak in all_subject_names:
 #print(group_student_database)
 ##------------------------------FUNCTIES----------------------------##
 
-
 #Geeft aantal keer dat vak gegeven wordt per week
 #input is vak_info en naam van vak dat gezocht moet worden
 def aantalcollegesinweek(vakinfo, vak):
@@ -159,6 +172,7 @@ def aantalcollegesinweek(vakinfo, vak):
 			total = hc + wc + pr
 			#return {'hc': hc, 'wc': wc, 'pr': pr, 'tot':total}
 			return {hc,wc,pr}
+
 #Geeft aantal beschikbare dagen volgens bonus regeling
 #input is aantal x college in de week
 def bonusdageninweek(aantalx):
@@ -170,6 +184,9 @@ def bonusdageninweek(aantalx):
 		return [['ma', 'do'], ['di', 'vr']]
 	else:
 		return ['ma', 'di', 'wo', 'do', 'vr']
+
+#Geeft aantal leerlingen die dubbel geroosterd zijn in een bepaald tijdsslot
+
 
 
 
