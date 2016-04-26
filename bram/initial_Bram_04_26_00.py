@@ -81,21 +81,18 @@ for subject in all_subject_names:
 	for subject_details in vak_info:
 		#check of je details van juiste vak hebt
 		if subject in subject_details.values():
-			
 			#geef hoorcolleges een unieke naam en voeg ze toe aan de dict
 			hc = int(subject_details["hoorcolleges"])
 			for i in range(1,hc+1):
 				vak_naam = "hc_" + str(i) + "_1_" + subject
-#				print vak_naam
-#				print subject
+#				print(vak_naam)
+#				print(subject)
 				group_student_database[vak_naam] = subject_student_database[subject]
-#				print group_student_database[vak_naam]
-
+#				print(group_student_database[vak_naam])
 			#geef werkcolleges een unieke naam en maak groepen. Voeg die groepen toe aan dict
 			wc = int(subject_details["werkcolleges"])
-			wc_number = 1
+			#wc_number = 1
 			subject_student_number = float(len(subject_student_database[subject]))
-
 			#hoeveelste werkcollege
 			for i in range(1,wc+1):
 				# checkt hoeveel werkgroepen er nodig zijn
@@ -104,23 +101,28 @@ for subject in all_subject_names:
 					wc_number = int(stud_over_max) + 1
 				else:
 					wc_number = int(stud_over_max)
-
 				# welke groep het is per werkcollege en voegd code en inhoud aan groepen
-				check = subject_student_number / wc_number
-				check = int(math.ceil(check))
+				check = int(math.ceil((subject_student_number / wc_number)))
+				x = 0
+				check_nr_studenten = 0
 				for j in range(1,wc_number+1): #later ABC?
 					vak_naam = "wc_" + str(i) + "_" + str(j) + "_" + subject
-					x = 0
-					for group in range(wc_number):
-						print(x)
-						print(check)
-						group_student_database.setdefault(vak_naam, []).append(subject_student_database[subject][x:x+check])
-						print(group)
-						print(group_student_database[vak_naam])
-						x += check
-
-					#print group_student_database['wc_1_1_Calculus_2']
-					
+#					for group in range(0, wc_number):
+#					print(vak_naam)
+#					print((x+check))
+#					print(x)
+#					print(group)
+#					group_student_database.setdefault(vak_naam, []).append(subject_student_database[subject][x:x+check])
+					group_student_database[vak_naam] = subject_student_database[subject][x:x+check]
+					x += check
+#					print(vak_naam)
+#					print(group_student_database[vak_naam])
+#					print(check)
+					check_nr_studenten += len(group_student_database[vak_naam])
+				if check_nr_studenten == len(subject_student_database[subject]):
+					print(vak_naam)
+				else:
+					print('niet goed')
 
 			##-------------------------
 			##nog niet aan toe gekomen
@@ -135,19 +137,19 @@ for subject in all_subject_names:
 #print(group_student_database)
 
 ##---------------DIT IS OM STRAKS TE CHECKEN OF IK GEEN STUDENTEN KWIJT BEN GERAAKT IN DE INDELING-----------------
-#for vak in all_subject_names:
-#	for key1, value1 in group_student_database.items():
-#		for key2, value2 in subject_student_database.items():
-#			check_key1 = key1[7:]
-#			if check_key1 == key2 and key1[:2] == "hc":
-#				#print(key1)
-#				#print(key2)
-#				if len(group_student_database[key1]) == len(subject_student_database[subject]):
-#					#print('check')
-#					haha=2
-#				else:
-#					print ('error')
-#					print(key1)
+for vak in all_subject_names:
+	for key1, value1 in group_student_database.items():
+		for key2, value2 in subject_student_database.items():
+			check_key1 = key1[7:]
+			if check_key1 == key2 and key1[:2] == "hc":
+				#print(key1)
+				#print(key2)
+				if len(group_student_database[key1]) == int(subject_student_number[key2]):
+					#print('check')
+					haha=2
+				else:
+					print ('error')
+					print(key1)
 #print(group_student_database)
 ##------------------------------FUNCTIES----------------------------##
 

@@ -73,81 +73,61 @@ print subject_student_database1
 #print subject_student_database"""
 
 group_student_database = {}
-test = {}
-x = 0
 #loop over alle vakken
 for subject in all_subject_names:
 	#loop over alle details van vak
 	for subject_details in vak_info:
 		#check of je details van juiste vak hebt
 		if subject in subject_details.values():
-			
+			subject_student_number = float(len(subject_student_database[subject]))
+			##------------------------
 			#geef hoorcolleges een unieke naam en voeg ze toe aan de dict
 			hc = int(subject_details["hoorcolleges"])
 			for i in range(1,hc+1):
 				vak_naam = "hc_" + str(i) + "_1_" + subject
-#				print vak_naam
-#				print subject
 				group_student_database[vak_naam] = subject_student_database[subject]
-#				print group_student_database[vak_naam]
-
+			##-------------------------
 			#geef werkcolleges een unieke naam en maak groepen. Voeg die groepen toe aan dict
 			wc = int(subject_details["werkcolleges"])
-			wc_number = 1
-			subject_student_number = float(len(subject_student_database[subject]))
-
 			#hoeveelste werkcollege
 			for i in range(1,wc+1):
-				# checkt hoeveel werkgroepen er nodig zijn
+				# checkt hoeveel werkgroepen er nodig zijn, dit hangt af van de parameter bovenaan
 				stud_over_max = subject_student_number / float(subject_details["werk_max_stud"])
 				if (stud_over_max % 1) > parameter_werkgroep_grootte:
 					wc_number = int(stud_over_max) + 1
 				else:
 					wc_number = int(stud_over_max)
-
 				# welke groep het is per werkcollege en voegd code en inhoud aan groepen
-				check = subject_student_number / wc_number
-				check = int(math.ceil(check))
+				check = int(math.ceil((subject_student_number / wc_number)))
+				x = 0
+				check_nrstud_wc = 0	##voor check of alle studenten zijn ingedeeld
 				for j in range(1,wc_number+1): #later ABC?
 					vak_naam = "wc_" + str(i) + "_" + str(j) + "_" + subject
-					x = 0
-					for group in range(wc_number):
-						print(x)
-						print(check)
-						group_student_database.setdefault(vak_naam, []).append(subject_student_database[subject][x:x+check])
-						print(group)
-						print(group_student_database[vak_naam])
-						x += check
-
-					#print group_student_database['wc_1_1_Calculus_2']
-					
-
+					group_student_database[vak_naam] = subject_student_database[subject][x:x+check]
+					x += check
+					check_nrstud_wc += len(group_student_database[vak_naam])	##voor check of alle studenten zijn ingedeeld
 			##-------------------------
 			##nog niet aan toe gekomen
 			pr = int(subject_details["practica"])
 			for i in range(1,pr+1):
-				pr_number = int(1)
+				stud_over_max = subject_student_number / float(subject_details["practica_max_stud"])
+				if (stud_over_max % 1) > parameter_werkgroep_grootte: ##????hier andere parameter doen????##
+					pr_number = int(stud_over_max) + 1
+				else:
+					pr_number = int(stud_over_max)
+				check = int(math.ceil((subject_student_number / pr_number)))
+				x = 0
+				check_nrstud_pr = 0
 				for j in range(1,pr_number+1): #later ABC?
 					vak_naam = "pr_" + str(i) + "_" + str(j) + "_" + subject
-					group_student_database.setdefault(vak_naam, []).append(x)
-
-
+					group_student_database[vak_naam] = subject_student_database[subject][x:x+check]
+					x += check
+					check_nrstud_pr += len(group_student_database[vak_naam])	##voor check of alle studenten zijn ingedeeld
+print(len(group_student_database))
 #print(group_student_database)
 
 ##---------------DIT IS OM STRAKS TE CHECKEN OF IK GEEN STUDENTEN KWIJT BEN GERAAKT IN DE INDELING-----------------
-#for vak in all_subject_names:
-#	for key1, value1 in group_student_database.items():
-#		for key2, value2 in subject_student_database.items():
-#			check_key1 = key1[7:]
-#			if check_key1 == key2 and key1[:2] == "hc":
-#				#print(key1)
-#				#print(key2)
-#				if len(group_student_database[key1]) == len(subject_student_database[subject]):
-#					#print('check')
-#					haha=2
-#				else:
-#					print ('error')
-#					print(key1)
+
 #print(group_student_database)
 ##------------------------------FUNCTIES----------------------------##
 
