@@ -19,16 +19,22 @@ def duplicate_student(rooster):
 						else:
 							student_check.append(student)
 	return(counter_malus)
-"""
 
-								for ander_student in rooster[dag][tijdslot][zaal][ander_vak]:
-									if student is ander_student:
-										if student is not in stud:
-											stud.append(student)
-										else:
-											counter_malus += 1
-	return counter_malus
-"""
+def malus_lokalen(rooster):
+	min_punten_lokalen = 0
+	for dag in rooster.keys():
+		for tijdsl in rooster[dag].keys():
+			for lok in rooster[dag][tijdsl].keys():
+				for keys in rooster[dag][(tijdsl)][lok]:
+					x = (lokalen_info[lok]-(len(rooster[dag][(tijdsl)][lok][keys])))
+					if x < 0:
+						min_punten_lokalen += x
+	return(min_punten_lokalen)
+
+def rooster_punten(rooster):
+	return 1000 - duplicate_student(rooster) + malus_lokalen(rooster)
+
+
 ##---------------Parameter waardes ----------------------------------------------##
 #bepaalt hoe vol/leeg de werkgroepen mogen zijn
 parameter_werkgroep_grootte = 0.21 #0.41 en 0.61 zijn ook interessante grenzen
@@ -37,6 +43,7 @@ parameter_werkgroep_grootte = 0.21 #0.41 en 0.61 zijn ook interessante grenzen
 import csv
 import math
 import random
+from copy import deepcopy
 from fnmatch import fnmatch, fnmatchcase
 
 # Het inladen van informatie van de csv files
@@ -154,9 +161,25 @@ for subject in list(group_student_database.keys()):
 	roosteren(subject, rooster, group_student_database)
 
 ##-----------------------------------VANAF HIER IS HET ROOSTER RANDOM & GELDIG---------------------------##
+beste_rooster = []
 
-#print rooster
-print duplicate_student(rooster)
+for i in range(0, 10):
+	for subject in list(group_student_database.keys()):
+		roosteren(subject, rooster, group_student_database)
+
+	if not beste_rooster:
+		beste_rooster = deepcopy(rooster)
+
+	hoogste_punt = rooster_punten(beste_rooster)
+	nieuw_punt = rooster_punten(rooster)
+
+	if hoogste_punt < nieuw_punt:
+		beste_rooster = deepcopy(rooster)
+		hoogste_punt = rooster_punten(beste_rooster)
+
+	rooster.clear()
+
+print rooster_punten(beste_rooster)
 
 studenten_roostering.close()
 vakinfo.close()
