@@ -56,7 +56,7 @@ def duplicate_student(rooster):
 						if vak is not ander_vak:
 							for student in rooster[dag][tijdslot][zaal][vak]:
 								for ander_student in rooster[dag][tijdslot][zaal][ander_vak]:
-									if student is ander_student:	
+									if student is ander_student:
 										counter_malus += 1
 	return counter_malus
 
