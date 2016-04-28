@@ -5,7 +5,29 @@ van alle studenten erin te krijgen.
 Zo kunnen we van elke student weten in welke klassen die zit,
 hoeveel mensen er in elke klas zitten etc.
 """
-##---------------Functies ----------------------------------------------##
+##---------------Parameter values ----------------------------------------------##
+#bepaalt hoe vol/leeg de werkgroepen mogen zijn
+parameter_werkgroep_grootte = 0.21 #0.41 en 0.61 zijn ook interessante grenzen
+
+##---------------Libraries -----------------------------------------------------##
+import csv
+import math
+import random
+from copy import deepcopy
+from fnmatch import fnmatch, fnmatchcase
+
+##---------------Functions -----------------------------------------------------##
+
+
+def roosteren(vak, timetable, gro_stu_dat):
+	day = random.choice(week)
+	time = random.choice(tijdslots)
+	room = random.choice(list(lokalen_info.keys()))
+	if not bool(timetable[day][time][room]):
+		timetable[day][time][room][vak] = gro_stu_dat[vak]
+	else:
+		roosteren(vak, timetable, gro_stu_dat)
+
 def duplicate_student(rooster):
 	counter_malus = 0
 	for dag in rooster.keys():
@@ -34,17 +56,26 @@ def malus_lokalen(rooster):
 def rooster_punten(rooster):
 	return 1000 - duplicate_student(rooster) + malus_lokalen(rooster)
 
+def multiple_timetables(rooster):
+	beste_rooster = []
 
-##---------------Parameter waardes ----------------------------------------------##
-#bepaalt hoe vol/leeg de werkgroepen mogen zijn
-parameter_werkgroep_grootte = 0.21 #0.41 en 0.61 zijn ook interessante grenzen
+	for i in range(0, 10):
+		for subject in list(group_student_database.keys()):
+			roosteren(subject, rooster, group_student_database)
+		if not beste_rooster:
+			beste_rooster = deepcopy(rooster)
 
-##---------------Inladen Informatie ---------------------------------------------##
-import csv
-import math
-import random
-from copy import deepcopy
-from fnmatch import fnmatch, fnmatchcase
+		hoogste_punt = rooster_punten(beste_rooster)
+		nieuw_punt = rooster_punten(rooster)
+
+		if hoogste_punt < nieuw_punt:
+			beste_rooster = deepcopy(rooster)
+			hoogste_punt = rooster_punten(beste_rooster)
+		rooster.clear()
+
+	return hoogste_punt, beste_rooster
+
+##---------------Loading / ordening information --------------------------------##
 
 # Het inladen van informatie van de csv files
 studenten_roostering = open("studenten_roostering.csv")
@@ -59,7 +90,7 @@ data_vakken 		= [row for row in csv_vakken] #previous data_info
 header_studenten 	= [name for name in data_studenten[0]] #previous people_var
 header_vakken 		= [name for name in data_vakken[0]] #previous var_info
 
-##---------------DICTs met info ---------------------------------------------##
+##---------------DICTs with info ----------------------------------------------##
 # Maak dict van type data tegen details student/vak
 student_info 	= [dict(zip(header_studenten, check)) for check in data_studenten]
 vak_info	 	= [dict(zip(header_vakken, check)) for check in data_vakken]
@@ -69,24 +100,16 @@ info_student 	= [dict(zip(check, header_studenten)) for check in data_studenten]
 info_vak	 	= [dict(zip(check, header_vakken)) for check in data_vakken]
 info_lokalen 	= {41 : "A1.04", 22 : "A1.06", 20 : "A1.08", 56 : "A1.10", 48 : "B0.201", 117 : "C0.110", 60 : "C1.112"}
 
+##---------------Timetable info------------------------------------------------##
 all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit","Analysemethoden_en_technieken","Architectuur_en_computerorganisatie",
 "Autonomous_Agents_2","Bioinformatica","Calculus_2","Collectieve_Intelligentie","Compilerbouw","Compilerbouw_practicum","Data_Mining",
 "Databases_2","Heuristieken_1","Heuristieken_2","Informatie_en_organisatieontwerp","Interactie_ontwerp","Kansrekenen_2",
 "Lineaire_Algebra","Machine_Learning","Moderne_Databases","Netwerken_en_systeembeveiliging","Programmeren_in_Java_2",
 "Project_Genetic_Algorithms","Project_Numerical_Recipes","Reflectie_op_de_digitale_cultuur","Software_engineering",
 "Technology_for_games","Webprogrammeren_en_databases","Zoeken_sturen_en_bewegen"]
-
-#Maak een leeg rooster van dicts in volgorde dag->tijdslot->lokalen
-#Toe te voegen; Dict met key vak en values studNrs van studenten uit vak/werkgroep
 week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
 tijdslots = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00', '17.00-19.00']
-rooster = {}
-for dag in week:
-	rooster[dag] = {}
-	for tijdsl in tijdslots:
-		rooster[dag][(tijdsl)] = {}
-		for lok in lokalen_info:
-			rooster[dag][(tijdsl)][lok] = {} #voeg dict met studenten toe
+
 
 #Maak dict van vak tegen string van student nummers van leerlingen die 't volgen
 subject_student_database = {}
@@ -148,38 +171,14 @@ for subject in all_subject_names:
 #print(len(group_student_database))
 
 ##-------------------------------KIES RANDOM DAG-TIJDSLOT-LOKAAL IN DE WEEK-----------------------------##
-def roosteren(vak, timetable, gro_stu_dat):
-	day = random.choice(week)
-	time = random.choice(tijdslots)
-	room = random.choice(list(lokalen_info.keys()))
-	if not bool(timetable[day][time][room]):
-		timetable[day][time][room][vak] = gro_stu_dat[vak]
-	else:
-		roosteren(vak, timetable, gro_stu_dat)
 
 for subject in list(group_student_database.keys()):
 	roosteren(subject, rooster, group_student_database)
 
 ##-----------------------------------VANAF HIER IS HET ROOSTER RANDOM & GELDIG---------------------------##
-beste_rooster = []
 
-for i in range(0, 10):
-	for subject in list(group_student_database.keys()):
-		roosteren(subject, rooster, group_student_database)
+print test()
 
-	if not beste_rooster:
-		beste_rooster = deepcopy(rooster)
-
-	hoogste_punt = rooster_punten(beste_rooster)
-	nieuw_punt = rooster_punten(rooster)
-
-	if hoogste_punt < nieuw_punt:
-		beste_rooster = deepcopy(rooster)
-		hoogste_punt = rooster_punten(beste_rooster)
-
-	rooster.clear()
-
-print rooster_punten(beste_rooster)
 
 studenten_roostering.close()
 vakinfo.close()
