@@ -43,6 +43,27 @@ def roosteren(vak, timetable, gro_stu_dat):
 	else:
 		roosteren(vak, timetable, gro_stu_dat)
 
+def multiple_timetables(rooster):
+	beste_rooster = []
+
+	for i in range(0, 10):
+		for subject in list(group_student_database.keys()):
+			roosteren(subject, rooster, group_student_database)
+
+		if not beste_rooster:
+			beste_rooster = deepcopy(rooster)
+
+		hoogste_punt = rooster_punten(beste_rooster)
+		nieuw_punt = rooster_punten(rooster)
+
+		if hoogste_punt < nieuw_punt:
+			beste_rooster = deepcopy(rooster)
+			hoogste_punt = rooster_punten(beste_rooster)
+
+		rooster.clear()
+
+	return hoogste_punt, beste_rooster
+
 
 ##---------------Parameter waardes ----------------------------------------------##
 #bepaalt hoe vol/leeg de werkgroepen mogen zijn
@@ -162,29 +183,9 @@ for subject in list(group_student_database.keys()):
 	roosteren(subject, rooster, group_student_database)
 
 ##-----------------------------------VANAF HIER IS HET ROOSTER RANDOM & GELDIG---------------------------##
-def multiple_timetables(rooster):
-	beste_rooster = []
 
-	for i in range(0, 10):
-		for subject in list(group_student_database.keys()):
-			roosteren(subject, rooster, group_student_database)
+print str(rooster_punten(rooster)) + " punten!"  
 
-		if not beste_rooster:
-			beste_rooster = deepcopy(rooster)
-
-		hoogste_punt = rooster_punten(beste_rooster)
-		nieuw_punt = rooster_punten(rooster)
-
-		if hoogste_punt < nieuw_punt:
-			beste_rooster = deepcopy(rooster)
-			hoogste_punt = rooster_punten(beste_rooster)
-
-		rooster.clear()
-
-	return hoogste_punt, beste_rooster
-
-print str(len(all_subject_names)) + " vakken."
-print str(len(student_info)) + " studenten"
 
 studenten_roostering.close()
 vakinfo.close()
