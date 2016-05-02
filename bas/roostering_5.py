@@ -183,8 +183,10 @@ def multiple_timetables(rooster):
 
 	return hoogste_punt, beste_rooster
 
+print rooster
 print str(len(all_subject_names)) + " vakken."
 print str(len(student_info)) + " studenten"
+
 
 studenten_roostering.close()
 vakinfo.close()
