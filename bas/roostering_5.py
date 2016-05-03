@@ -71,6 +71,8 @@ parameter_werkgroep_grootte = 0.21 #0.41 en 0.61 zijn ook interessante grenzen
 
 ##---------------Inladen Informatie ---------------------------------------------##
 import csv
+import xlsxwriter
+import collections
 import math
 import random
 from copy import deepcopy
@@ -184,8 +186,62 @@ for subject in list(group_student_database.keys()):
 
 ##-----------------------------------VANAF HIER IS HET ROOSTER RANDOM & GELDIG---------------------------##
 
-print str(rooster_punten(rooster)) + " punten!"  
+#print str(rooster_punten(rooster)) + " punten!"  
+#print rooster["maandag"]
 
+#for key in sorted(rooster["maandag"]):
+#	print "%s: %s" % (key, rooster["maandag"][key])
 
+od = collections.OrderedDict(sorted(rooster.items()))
+print od
+
+##-----------------------------------WRITE TO EXCELL FILE------------------------------------------------##
+
+# Create an new Excel file and add a worksheet.
+workbook = xlsxwriter.Workbook('rooster.xlsx')
+worksheet = workbook.add_worksheet()
+
+time_row = 1
+ma_row = 1
+di_row = 1
+wo_row = 1
+do_row = 1
+vr_row = 1
+col = 0
+dag_col = 0
+
+for dag in week:
+	worksheet.write(0, dag_col, dag)
+	dag_col += 3
+	for tijdslot in rooster[dag]:
+		for lokaal in (rooster[dag][tijdslot]):
+			for vak in (rooster[dag][tijdslot][lokaal]):
+				if dag is "maandag":
+					worksheet.write(ma_row, col + 0, tijdslot)
+					worksheet.write(ma_row, col + 1, "Lokaal: " + lokaal)
+					worksheet.write(ma_row, col + 2, "Vak: " + vak + ".")
+					ma_row += 1
+				if dag is "dinsdag":
+					worksheet.write(di_row, col + 3, tijdslot)
+					worksheet.write(di_row, col + 4, "Lokaal: " + lokaal)
+					worksheet.write(di_row, col + 5, "Vak: " + vak + ".")
+					di_row += 1
+				if dag is "woensdag":
+					worksheet.write(wo_row, col + 6, tijdslot)
+					worksheet.write(wo_row, col + 7, "Lokaal: " + lokaal)
+					worksheet.write(wo_row, col + 8, "Vak: " + vak + ".")
+					wo_row += 1
+				if dag is "donderdag":
+					worksheet.write(do_row, col + 9, tijdslot)
+					worksheet.write(do_row, col + 10, "Lokaal: " + lokaal)
+					worksheet.write(do_row, col + 11, "Vak: " + vak + ".")
+					do_row += 1
+				if dag is "vrijdag":
+					worksheet.write(vr_row, col + 12, tijdslot)
+					worksheet.write(vr_row, col + 13, "Lokaal: " + lokaal)
+					worksheet.write(vr_row, col + 14, "Vak: " + vak + ".")
+					vr_row += 1
+
+workbook.close()
 studenten_roostering.close()
 vakinfo.close()
