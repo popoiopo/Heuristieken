@@ -111,7 +111,7 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit","Analyse
 #Maak een leeg rooster van dicts in volgorde dag->tijdslot->lokalen
 #Toe te voegen; Dict met key vak en values studNrs van studenten uit vak/werkgroep
 week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
-tijdslots = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00', '17.00-19.00']
+tijdslots = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00']
 rooster = {}
 for dag in week:
 	rooster[dag] = {}
@@ -189,11 +189,13 @@ for subject in list(group_student_database.keys()):
 #print str(rooster_punten(rooster)) + " punten!"  
 #print rooster["maandag"]
 
-#for key in sorted(rooster["maandag"]):
-#	print "%s: %s" % (key, rooster["maandag"][key])
+for key in sorted(rooster["maandag"]):
+	print "%s: %s" % (key, rooster["maandag"][key])
 
-od = collections.OrderedDict(sorted(rooster.items()))
-print od
+#print rooster_punten(rooster)
+
+#od = collections.OrderedDict(sorted(rooster.items()))
+#print od
 
 ##-----------------------------------WRITE TO EXCELL FILE------------------------------------------------##
 
@@ -201,47 +203,185 @@ print od
 workbook = xlsxwriter.Workbook('rooster.xlsx')
 worksheet = workbook.add_worksheet()
 
-time_row = 1
-ma_row = 1
-di_row = 1
-wo_row = 1
-do_row = 1
-vr_row = 1
-col = 0
-dag_col = 0
+################### leeg rooster
+dag_col = 2
+tijdslot_row = 1
+lokaal_row = 1
 
 for dag in week:
 	worksheet.write(0, dag_col, dag)
-	dag_col += 3
-	for tijdslot in rooster[dag]:
-		for lokaal in (rooster[dag][tijdslot]):
-			for vak in (rooster[dag][tijdslot][lokaal]):
-				if dag is "maandag":
-					worksheet.write(ma_row, col + 0, tijdslot)
-					worksheet.write(ma_row, col + 1, "Lokaal: " + lokaal)
-					worksheet.write(ma_row, col + 2, "Vak: " + vak + ".")
-					ma_row += 1
-				if dag is "dinsdag":
-					worksheet.write(di_row, col + 3, tijdslot)
-					worksheet.write(di_row, col + 4, "Lokaal: " + lokaal)
-					worksheet.write(di_row, col + 5, "Vak: " + vak + ".")
-					di_row += 1
-				if dag is "woensdag":
-					worksheet.write(wo_row, col + 6, tijdslot)
-					worksheet.write(wo_row, col + 7, "Lokaal: " + lokaal)
-					worksheet.write(wo_row, col + 8, "Vak: " + vak + ".")
-					wo_row += 1
-				if dag is "donderdag":
-					worksheet.write(do_row, col + 9, tijdslot)
-					worksheet.write(do_row, col + 10, "Lokaal: " + lokaal)
-					worksheet.write(do_row, col + 11, "Vak: " + vak + ".")
-					do_row += 1
-				if dag is "vrijdag":
-					worksheet.write(vr_row, col + 12, tijdslot)
-					worksheet.write(vr_row, col + 13, "Lokaal: " + lokaal)
-					worksheet.write(vr_row, col + 14, "Vak: " + vak + ".")
-					vr_row += 1
+	dag_col += 1
 
+for tijdslot in tijdslots:
+	worksheet.write(tijdslot_row, 0, tijdslot)
+	tijdslot_row += 7
+	for lokaal in (lokalen_info):
+		worksheet.write(lokaal_row, 1, lokaal)
+		lokaal_row += 1
+
+############ invullen rooster
+
+col = 0
+ma_row_9 = 1
+ma_row_11 = 8
+ma_row_13 = 15
+ma_row_15 = 22
+di_row_9 = 1
+di_row_11 = 8
+di_row_13 = 15
+di_row_15 = 22
+wo_row_9 = 1
+wo_row_11 = 8
+wo_row_13 = 15
+wo_row_15 = 22
+do_row_9 = 1
+do_row_11 = 8
+do_row_13 = 15
+do_row_15 = 22
+vr_row_9 = 1
+vr_row_11 = 8
+vr_row_13 = 15
+vr_row_15 = 22
+
+for dag in rooster.keys():
+	for tijdslot in rooster[dag].keys():
+		for lokaal in rooster[dag][tijdslot].keys():
+			if bool (rooster[dag][tijdslot][lokaal]):
+				vak = str(rooster[dag][tijdslot][lokaal].keys())
+				if dag is "maandag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(ma_row_9, col + 2, "Vak: " + vak)
+						ma_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(ma_row_11, col + 2, "Vak: " + vak)
+						ma_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(ma_row_13, col + 2, "Vak: " + vak)
+						ma_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(ma_row_15, col + 2, "Vak: " + vak)
+						ma_row_15 += 1
+				if dag is "dinsdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(di_row_9, col + 3, "Vak: " + vak)
+						di_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(di_row_11, col + 3, "Vak: " + vak)
+						di_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(di_row_13, col + 3, "Vak: " + vak)
+						di_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(di_row_15, col + 3, "Vak: " + vak)
+						di_row_15 += 1
+				if dag is "woensdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(wo_row_9, col + 4, "Vak: " + vak)
+						wo_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(wo_row_11, col + 4, "Vak: " + vak)
+						wo_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(wo_row_13, col + 4, "Vak: " + vak)
+						wo_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(wo_row_15, col + 4, "Vak: " + vak)
+						wo_row_15 += 1
+				if dag is "donderdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(do_row_9, col + 5, "Vak: " + vak)
+						do_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(do_row_11, col + 5, "Vak: " + vak)
+						do_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(do_row_13, col + 5, "Vak: " + vak)
+						do_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(do_row_15, col + 5, "Vak: " + vak)
+						do_row_15 += 1				
+				if dag is "vrijdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(vr_row_9, col + 6, "Vak: " + vak)
+						vr_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(vr_row_11, col + 6, "Vak: " + vak)
+						vr_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(vr_row_13, col + 6, "Vak: " + vak)
+						vr_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(vr_row_15, col + 6, "Vak: " + vak)
+						vr_row_15 += 1
+
+			if not bool (rooster[dag][tijdslot][lokaal]):
+				vak = " "
+				if dag is "maandag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(ma_row_9, col + 2, "Vak: " + vak)
+						ma_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(ma_row_11, col + 2, "Vak: " + vak)
+						ma_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(ma_row_13, col + 2, "Vak: " + vak)
+						ma_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(ma_row_15, col + 2, "Vak: " + vak)
+						ma_row_15 += 1
+				if dag is "dinsdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(di_row_9, col + 3, "Vak: " + vak)
+						di_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(di_row_11, col + 3, "Vak: " + vak)
+						di_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(di_row_13, col + 3, "Vak: " + vak)
+						di_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(di_row_15, col + 3, "Vak: " + vak)
+						di_row_15 += 1
+				if dag is "woensdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(wo_row_9, col + 4, "Vak: " + vak)
+						wo_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(wo_row_11, col + 4, "Vak: " + vak)
+						wo_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(wo_row_13, col + 4, "Vak: " + vak)
+						wo_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(wo_row_15, col + 4, "Vak: " + vak)
+						wo_row_15 += 1
+				if dag is "donderdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(do_row_9, col + 5, "Vak: " + vak)
+						do_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(do_row_11, col + 5, "Vak: " + vak)
+						do_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(do_row_13, col + 5, "Vak: " + vak)
+						do_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(do_row_15, col + 5, "Vak: " + vak)
+						do_row_15 += 1				
+				if dag is "vrijdag":
+					if tijdslot is '9.00-11.00':
+						worksheet.write(vr_row_9, col + 6, "Vak: " + vak)
+						vr_row_9 += 1
+					if tijdslot is '11.00-13.00':
+						worksheet.write(vr_row_11, col + 6, "Vak: " + vak)
+						vr_row_11 += 1
+					if tijdslot is '13.00-15.00':
+						worksheet.write(vr_row_13, col + 6, "Vak: " + vak)
+						vr_row_13 += 1
+					if tijdslot is '15.00-17.00':
+						worksheet.write(vr_row_15, col + 6, "Vak: " + vak)
+						vr_row_15 += 1
+						
 workbook.close()
 studenten_roostering.close()
 vakinfo.close()
