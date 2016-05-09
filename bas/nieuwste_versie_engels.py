@@ -63,8 +63,7 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit",
 
 days_in_week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
 
-time_frames = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00', 
-		'17.00-19.00']
+time_frames = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00']
 
 ##---------------Functions ---------------------------------------------------##
 
@@ -312,7 +311,7 @@ def excel_schedule(time_table, week, timeslots, classroom_info):
 	do_row_9 = 1
 	do_row_11 = 8
 	do_row_13 = 15
-	do_row_15 = 22
+	do_row_15 = 22 
 	vr_row_9 = 1
 	vr_row_11 = 8
 	vr_row_13 = 15
@@ -325,70 +324,68 @@ def excel_schedule(time_table, week, timeslots, classroom_info):
 				if bool (time_table[day][timeslot][classroom]):
 					course = str(time_table[day][timeslot][classroom].keys())
 					if day is "maandag":
-						print timeslot
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(ma_row_9,2, "Vak: " + course)
 							ma_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(ma_row_11,2, "Vak: " + course)
 							ma_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(ma_row_13,2, "Vak: " + course)
 							ma_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(ma_row_15,2, "Vak: " + course)
 							ma_row_15 += 1
-
 					if day is "dinsdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(di_row_9,3, "Vak: " + course)
 							di_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(di_row_11,3, "Vak: " + course)
 							di_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(di_row_13,3, "Vak: " + course)
 							di_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(di_row_15,3, "Vak: " + course)
 							di_row_15 += 1
 					if day is "woensdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(wo_row_9,4, "Vak: " + course)
 							wo_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(wo_row_11,4, "Vak: " + course)
 							wo_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(wo_row_13,4, "Vak: " + course)
 							wo_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(wo_row_15,4, "Vak: " + course)
 							wo_row_15 += 1
 					if day is "donderdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(do_row_9,5, "Vak: " + course)
 							do_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(do_row_11,5, "Vak: " + course)
 							do_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(do_row_13,5, "Vak: " + course)
 							do_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(do_row_15,5, "Vak: " + course)
 							do_row_15 += 1				
 					if day is "vrijdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(vr_row_9,6, "Vak: " + course)
 							vr_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(vr_row_11,6, "Vak: " + course)
 							vr_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(vr_row_13,6, "Vak: " + course)
 							vr_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(vr_row_15,6, "Vak: " + course)
 							vr_row_15 += 1
 
@@ -396,68 +393,68 @@ def excel_schedule(time_table, week, timeslots, classroom_info):
 				if not bool (time_table[day][timeslot][classroom]):
 					course = " "
 					if day is "maandag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(ma_row_9,2, course)
 							ma_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(ma_row_11,2, course)
 							ma_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(ma_row_13,2, course)
 							ma_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(ma_row_15,2, course)
 							ma_row_15 += 1
 					if day is "dinsdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(di_row_9,3, course)
 							di_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(di_row_11,3, course)
 							di_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(di_row_13,3, course)
 							di_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(di_row_15,3, course)
 							di_row_15 += 1
 					if day is "woensdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(wo_row_9,4, course)
 							wo_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(wo_row_11,4, course)
 							wo_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(wo_row_13,4, course)
 							wo_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(wo_row_15,4, course)
 							wo_row_15 += 1
 					if day is "donderdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(do_row_9,5,  course)
 							do_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(do_row_11,5, course)
 							do_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(do_row_13,5, course)
 							do_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(do_row_15,5, course)
 							do_row_15 += 1				
 					if day is "vrijdag":
-						if timeslot is '9.00-11.00':
+						if timeslot == '9.00-11.00':
 							worksheet.write(vr_row_9,6, course)
 							vr_row_9 += 1
-						if timeslot is '11.00-13.00':
+						if timeslot == '11.00-13.00':
 							worksheet.write(vr_row_11,6, course)
 							vr_row_11 += 1
-						if timeslot is '13.00-15.00':
+						if timeslot == '13.00-15.00':
 							worksheet.write(vr_row_13,6, course)
 							vr_row_13 += 1
-						if timeslot is '15.00-17.00':
+						if timeslot == '15.00-17.00':
 							worksheet.write(vr_row_15,6, course)
 							vr_row_15 += 1
 	workbook.close()
