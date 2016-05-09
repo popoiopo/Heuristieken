@@ -193,7 +193,6 @@ for subject in list(group_student_database.keys()):
 #	print "%s: %s" % (key, rooster["maandag"][key])
 
 od = collections.OrderedDict(sorted(rooster.items()))
-print od
 
 ##-----------------------------------WRITE TO EXCELL FILE------------------------------------------------##
 
