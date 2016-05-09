@@ -1,5 +1,5 @@
 #------Job en zijn plotje-------#  
-def plot_population(list_scores, naam):
+def plot_population(list_scores, name):
 	sorted_score = sorted(list_scores)
 	fit = stats.norm.pdf(list_scores, np.mean(list_scores), np.std(list_scores))
 	minvalue = "min: " + str(min(list_scores))
@@ -8,7 +8,7 @@ def plot_population(list_scores, naam):
 	standdev2 = (math.ceil(standdev1*100)/100)
 	standdev = "    SD: " + str(standdev2)
 	meanvalue = "    mean: " + str(np.mean(list_scores))
-	title = naam + "  " + minvalue + maxvalue + standdev + meanvalue
+	title = name + "  " + minvalue + maxvalue + standdev + meanvalue
 	pl.plot(list_scores,fit,'o')
 	pl.hist(list_scores,normed=True)
 	pl.xlabel('Points')
