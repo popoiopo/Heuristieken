@@ -19,17 +19,18 @@ import collections
 from copy import deepcopy
 from fnmatch import fnmatch, fnmatchcase
 from string import ascii_lowercase
+from random import shuffle
 
 ##---------------Parameter values --------------------------------------------##
 # Decides the ratio of emptyness/fullnes of the classrooms
 parameter_workgroupsizes = 0.21 #0.41 and 0.61 are also interesting values
-best_scores_maxsize = 30 #onthoud n aantal beste random gemaakte roosters
-n_random_tests = 30 #genereert n aantal random roosters waarvan de beste (n=best_scores_maxsize) worden onthouden
+best_scores_maxsize = 70 #onthoud n aantal beste random gemaakte roosters
+n_random_tests = (best_scores_maxsize+1) #genereert n aantal random roosters waarvan de beste (n=best_scores_maxsize) worden onthouden
 
-n_generaties = 1 #maak n generaties
-max_faults_in_recombination = 10 #maximum recombination faults is n
-population_size_per_generation = 3*best_scores_maxsize #laat populatie groeien tot deze size voordat selectie wordt toegepast
-selection_on_population = int(1.5*best_scores_maxsize) #graag van selectie; n=1 is constante populatie
+n_generaties = 100 #maak n generaties
+max_faults_in_recombination = 120 #maximum recombination faults is n
+population_size_per_generation = int(3*best_scores_maxsize) #laat populatie groeien tot deze size voordat selectie wordt toegepast
+selection_on_population = int(1*best_scores_maxsize) #graag van selectie; n=1 is constante populatie
 
 time_0 = time.time()
 ##---------------Loading and organising CSV files ----------------------------##
@@ -74,11 +75,9 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit",
 
 days_in_week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
 
-time_frames = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00', 
-		'17.00-19.00']
+time_frames = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00']
 
 ##---------------Functions ---------------------------------------------------##
-
 ##---------------Creating timetable ------------------------------------------##
 
 # Creates empty time table: day->timeslot->classroom----------------------------
@@ -487,7 +486,6 @@ def excel_schedule(time_table, week, timeslots, classroom_info):
 	workbook.close()
 '''
 
-###Brammm start
 ##---------------Remember best n timetables -----------------------------------##
 #compare Ttable score to lowest score of stored Ttables and replace if better.
 def take_best_scores(scores, passed_scores, table, x, max_size):
@@ -503,7 +501,7 @@ def take_best_scores(scores, passed_scores, table, x, max_size):
 			passed_scores[x] = check
 		scores[passed_scores[x]] = copy.deepcopy(Ttable)
 		Ttable.clear()
-		if len(scores) < max_size:
+		if len(list(scores.keys())) < max_size:
 			scores[min_value_0] = copy.deepcopy(min_value_1)
 	else:
 		scores[min_value_0] = copy.deepcopy(min_value_1)
@@ -524,9 +522,12 @@ def take_best_scores2(score, passed_scores, table, x, abc):
 #chekc if value is already in priority queue, if so, change value to prevent error
 def unique_score(Score, value):
 	if value in Score:
-		value -= 1
-		unique_score(Score, value)	
-	return value
+#		print('in keys is', value)
+		value -= 0.1
+		return unique_score(Score, value)
+	else:
+#		print('not in keys is', value)
+		return value
 
 ##-----------------Mutaties op rooster voor Hillclimber----------------------##
 def delete_random_subject(table):
@@ -546,7 +547,6 @@ def delete_random_subject(table):
 			subject_name = check
 ###		print(subject_name ,'wordt gedelete uit het rooster')
 		return subject_name
-###Brammm end
 
 ##---------------Filling the courses -----------------------------------------##
 subject_student_database = {}
@@ -603,6 +603,8 @@ for subject in all_subject_names:
 					group_student_database[course_name] = subject_student_database[subject][x:x+check]
 					x += check
 
+
+
 ####Brammm start
 ##---------------As of now all timetables are random and valid ---------------##
 #scores voor random roosters
@@ -618,9 +620,10 @@ score_ditribution_in_week_GenAL = {}
 
 best_scores_random = {} #dict voor beste n roosters van random gemaakte roosters
 best_scores_hillcl = {} #dict om beste n roosters te muteren in hillclimber
+best_scores_GenAl = {}
 
-best_scores_random = {-1001: 'lala'} #noodzakelijke nulwaarde om programma te laten werken
-
+best_scores_random = {-10001: 'lala'} #noodzakelijke nulwaarde om programma te laten werken
+#maak n_radom_tests timetables, bewaar de best_scores_maxsize beste daarvan
 for i in range(0,n_random_tests):
 	time_table = empty_timetable(days_in_week, time_frames, classroom_info)
 	time_table = make_random_timetable(time_table, group_student_database, 
@@ -633,134 +636,145 @@ for i in range(0,n_random_tests):
 time_2 = time.time()
 x = time_2-time_0
 print('Het duurt', x,'seconden voor het genereren van', n_random_tests, 'random roosters')
-
 print('De beste', best_scores_maxsize,'roosters zijn bewaard in een dict onder de volgende keys')
 print(best_scores_random.keys())
 
-'''
-n_generaties = 2 #maak n generaties
-max_faults_in_recombination = 10 #maximum recombination faults is n
-population_size_per_generation = 3*best_scores_maxsize #laat populatie groeien tot deze size voordat selectie wordt toegepast
-selection_on_population = int(1.5*best_scores_maxsize) #graag van selectie; n=1 is constante populatie
-'''
+##-----------------functie voor genetic algotrithmen----------------------##
+def time_table_points2(time_table):
+	p_dubb_roos = duplicate_student(time_table)
+	p_loka_capa = minus_classrooms(time_table)
+	p_verd_week = bonus_distribution(time_table, all_subject_names, course_info)
+	p_tot = 1000 + p_dubb_roos + p_loka_capa + p_verd_week
+	return p_tot
+
 def take_two_diff_genes(all_genes):
 	gen1 = random.choice(all_genes)
 	gen2 = random.choice(all_genes)
 	if gen1 == gen2:
-#		print('oeps', gen2, gen1, 'zijn precies het zelfde')
 		return take_two_diff_genes(all_genes)
 	return(gen1,gen2)
 
-def check_geldigheid_rooster(table, gene_pool):
-	x = 0
+def check_geldigheid_rooster(table, gene_pool, parent1, parent2):
+	count_unique_subjects = 0
+	count_empty_spaces = 0
+	count_double_subjects = 0
+	count_all_options = 0
 	check_all_subjects = copy.deepcopy(list(group_student_database.keys()))
-#	print(check_all_subjects)
+#	days = list(table.keys())
+#	random.shuflle(days, random.random)
+#	for day in days:
 	for day in table.keys():
-#		print(day)
 		for timeslot in table[day].keys():
 			for classroom in table[day][timeslot].keys():
+				count_all_options+=1
+				if not bool(table[day][timeslot][classroom]):
+					count_empty_spaces += 1
+#					if I > 1:
+#						print(day, timeslot, classroom)
 				if bool(table[day][timeslot][classroom]):
 					subject = list(table[day][timeslot][classroom].keys())[0]
-#					print(subject)
 					if subject in check_all_subjects:
-						x = check_all_subjects.index(subject)
-						check_all_subjects.pop(x)
+						count_unique_subjects += 1
+						position = check_all_subjects.index(subject)
+						check_all_subjects.pop(position)
 					else:
-						x += 1
-	print((x + len(check_all_subjects)))
+						count_double_subjects += 1
+						table[day][timeslot][classroom].pop(subject)
+	if (len(check_all_subjects)) < max_faults_in_recombination:
+		for rescedule_subject in check_all_subjects:
+			scheduling(rescedule_subject, table, group_student_database, days_in_week, time_frames , classroom_info)
+#		if (len(check_all_subjects)) < 10:
+#			print(count_empty_spaces, 'empty classrooms')
+#			print(count_double_subjects, 'double subjects')
+		return True
+#	if (len(check_all_subjects)) < 18:
+#		print(count_empty_spaces, 'empty classrooms')
+#		print((parent1+parent2))
+#		print(count_all_options, 'zijn alle doorlopen tijdslots')
+#		print(len(check_all_subjects), (count_double_subjects), 'zijn dubbel geroosterd')
+#		print(count_empty_spaces, 'zijn alle lege lokalen')
+#		print((count_empty_spaces+count_double_subjects), 'plekken in het rooster zijn leeg of dubbel')
+#		return True
 
-
-#		scheduling(course, timetable, gro_stu_dat, week, timeslots, classroom_info)
-
+def mutation(ttable, week, timeslots , classroom_info):
+	day = random.choice(week)
+	time = random.choice(timeslots)
+	room = random.choice(list(classroom_info.keys()))
+	if not bool(timetable[day][time][room]):
+		mutation(ttable, week, timeslots , classroom_info)
+	else:
+		subject = list(table[day][timeslot][classroom].keys())[0]
+		timetable[day][time][room].pop(subject)
 
 def recombine_genes(parent1, parent2, population_all_parents, genes):
 	table1 = copy.deepcopy(population_all_parents[parent1])
 	table2 = copy.deepcopy(population_all_parents[parent2])
 	recombination_table = {}
 	days = list(table1.keys())
+	random.shuffle(days, random.random)
 	recombination_table[days[0]] = table2[days[0]]
 	recombination_table[days[1]] = table1[days[1]]
 	recombination_table[days[2]] = table1[days[2]]
 	recombination_table[days[3]] = table2[days[3]]
 	recombination_table[days[4]] = table1[days[4]]
-	check_geldigheid_rooster(recombination_table, genes)
+	if not bool(check_geldigheid_rooster(recombination_table, genes, parent1, parent2)):
+		recombination_table.clear()
+	elif bool(check_geldigheid_rooster(recombination_table, genes, parent1, parent2)):
+		points = time_table_points2(recombination_table)
+		check_scores = list(population_all_parents.keys())
+		if points in check_scores:
+#			print('change original score')
+			points = unique_score(check_scores, points)
+#			print(list(population_all_parents.keys()))
+#			print(points)
+#		print(points)
+		population_all_parents[points] = recombination_table
+#		print(len(list(population_all_parents.keys())))
+		return True
 
-#	time_table_points(time_table, score_total, score_double_students, score_classrooms, score_ditribution_in_week)
-
-
-def make_new_generation(old_generation_dict, population_size_per_generation):
+def make_new_generation(old_generation_dict):
 	gene_pool = list(best_scores_random.keys())
+	mean_value_genepool = mean_value(gene_pool)
 	size_population_parents = len(list(old_generation_dict.keys()))
-	print(size_population_parents)
-	print(size_population_parents + population_size_per_generation)
-#	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
-	for i in range(0,population_size_per_generation):
-#		print(size_population_parents)
-#		print(size_population_parents + population_size_per_generation)
+#	print('print grootte van populatie ouders',size_population_parents)
+	print('met een gemiddelde waarde van', mean_value_genepool)
+#	print('print beoogde populatie grootte', size_population_parents + population_size_per_generation)
+	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
 		(gen1, gen2) = take_two_diff_genes(gene_pool)
 		recombine_genes(gen1, gen2, old_generation_dict, gene_pool)
 
+def select_new_population(population):
+	old_population = copy.deepcopy(population)
+	population.clear()
+	population_scores = sorted(list(old_population.keys()), reverse = True)
+	for i in range(0,selection_on_population):
+		key = population_scores[i]
+		population[key] = old_population[key]
+#	print('print aantal ouders voor volgende generatie', len(population.keys()))
 
-#def select_new_population(old_and_new_generation, selection_on_population):
-#	best_scores_random = take_best_scores(best_scores_random, score_total, time_table, i, best_scores_maxsize)
-#	print('check')
+def mean_value(list_values):
+	size = len(list_values)
+	total = 0
+	mean = 0
+	for i in range(0,size):
+		total += list_values[i]
+	mean = (total/size)
+	return mean
 
+###--------------einde functies--------------------###
 #Sla scores op voor de nulde generatie
 score_total_GenAl[0]=[]
-for key in list(best_scores_random.keys()):
-#	print(key)
-	score_total_GenAl[0].append(key)
-
-print(score_total_GenAl)
 
 #Loop over generaties
-i = 1
-while i < (n_generaties+1):
-	print('generation', i)
-	make_new_generation(best_scores_random, population_size_per_generation)
-#	select_new_population(old_and_new_generation, selection_on_population)
-	i += 1
-
-
-'''
-keys = list(best_scores_random.keys())
-for i in range(0,best_scores_maxsize):
-	n = str(ascii_lowercase[i])
-	key = keys[i]
-	print (key)
-	score_total_hillcl[n] = [key]
-	score_double_students_hillcl[n] = [0]
-	score_classrooms_hillcl[n] = [0]
-	score_ditribution_in_week_hillcl[n] = [0]
-	best_scores_hillcl[n] = best_scores_random.pop(key)
-print(best_scores_hillcl.keys())
-print('Om te weten wat de score is van deze roosters is houden we een list van scores bij\n in een list, opgeslagen in een apparte dict, onder de zelfde key als de roosters:')
-print(score_total_hillcl)
-print('Ook de subscores van score_double_students, score_classrooms en score_ditribution_in_week zijn zo opgeslagen')
-
-print('Nu gaan we een aantal mutaties proberen. De parameter n_mutaties geeft aan hoe vaak we dit doen.')
-i = 1
-while i < n_mutaties:
-	for j in range(0,best_scores_maxsize):
-		key = str(ascii_lowercase[j])
-		table = copy.deepcopy(best_scores_hillcl[key])
-		for i in range(0,n_changes_in_mutation):
-			random_subject = delete_random_subject(table)
-###			print(random_subject, 'wordt random geroosterd, zeer waarschijnlijk niet op de zelfde plek')
-			scheduling2(random_subject, table, group_student_database, days_in_week, time_frames, classroom_info)
-		time_table_points(table, score_total_hillcl[key], score_double_students_hillcl[key],score_classrooms_hillcl[key], score_ditribution_in_week_hillcl[key])
-		best_scores_hillcl[key] = take_best_scores2(best_scores_hillcl[key], score_total_hillcl[key], table, i, key)
-		if i % print_every_n_mutations == 0:
-			if key == 'a':
-				print('Dit is mutatie loop' ,(i))
-				time_print = time.time()
-				x = time_print - time_0
-				print('Het duurt al', x,'seconden')
-			best_score_print = sorted(score_total_hillcl[key], reverse = True)[0]
-			print('beste score voor rooster', key, 'is', best_score_print)
-	i += 1
-
-'''
+I = 1
+while I < (n_generaties+1):
+	print('generation', I)
+	scores_generation = list(best_scores_random.keys())
+	print(sorted(scores_generation, reverse = True))
+	make_new_generation(best_scores_random)
+#	print('print lengte totale populatie', len(list(best_scores_random.keys())))
+	select_new_population(best_scores_random)
+	I += 1
 
 time_n = time.time()
 x = time_n - time_0

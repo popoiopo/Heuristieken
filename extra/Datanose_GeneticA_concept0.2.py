@@ -23,12 +23,12 @@ from string import ascii_lowercase
 ##---------------Parameter values --------------------------------------------##
 # Decides the ratio of emptyness/fullnes of the classrooms
 parameter_workgroupsizes = 0.21 #0.41 and 0.61 are also interesting values
-best_scores_maxsize = 30 #onthoud n aantal beste random gemaakte roosters
-n_random_tests = 30 #genereert n aantal random roosters waarvan de beste (n=best_scores_maxsize) worden onthouden
+best_scores_maxsize = 40 #onthoud n aantal beste random gemaakte roosters
+n_random_tests = 40 #genereert n aantal random roosters waarvan de beste (n=best_scores_maxsize) worden onthouden
 
 n_generaties = 1 #maak n generaties
 max_faults_in_recombination = 10 #maximum recombination faults is n
-population_size_per_generation = 3*best_scores_maxsize #laat populatie groeien tot deze size voordat selectie wordt toegepast
+population_size_per_generation = 200*best_scores_maxsize #laat populatie groeien tot deze size voordat selectie wordt toegepast
 selection_on_population = int(1.5*best_scores_maxsize) #graag van selectie; n=1 is constante populatie
 
 time_0 = time.time()
@@ -74,8 +74,7 @@ all_subject_names = ['Advanced_Heuristics',"Algoritmen_en_complexiteit",
 
 days_in_week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
 
-time_frames = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00', 
-		'17.00-19.00']
+time_frames = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00']
 
 ##---------------Functions ---------------------------------------------------##
 
@@ -643,34 +642,55 @@ max_faults_in_recombination = 10 #maximum recombination faults is n
 population_size_per_generation = 3*best_scores_maxsize #laat populatie groeien tot deze size voordat selectie wordt toegepast
 selection_on_population = int(1.5*best_scores_maxsize) #graag van selectie; n=1 is constante populatie
 '''
+
 def take_two_diff_genes(all_genes):
 	gen1 = random.choice(all_genes)
 	gen2 = random.choice(all_genes)
 	if gen1 == gen2:
-#		print('oeps', gen2, gen1, 'zijn precies het zelfde')
 		return take_two_diff_genes(all_genes)
 	return(gen1,gen2)
 
-def check_geldigheid_rooster(table, gene_pool):
-	x = 0
+def check_geldigheid_rooster(table, gene_pool, parent1, parent2):
+	count = 0
+	count2 = 0
+	count3 = 0
+	all_timetable_options = 0
 	check_all_subjects = copy.deepcopy(list(group_student_database.keys()))
-#	print(check_all_subjects)
+#	print(len(check_all_subjects), 'totaal aantal vakken')
 	for day in table.keys():
-#		print(day)
 		for timeslot in table[day].keys():
+#			print(timeslot)
 			for classroom in table[day][timeslot].keys():
+				all_timetable_options +=1
 				if bool(table[day][timeslot][classroom]):
 					subject = list(table[day][timeslot][classroom].keys())[0]
-#					print(subject)
+
 					if subject in check_all_subjects:
+						count2 += 1
 						x = check_all_subjects.index(subject)
 						check_all_subjects.pop(x)
+#						print(len(check_all_subjects))
 					else:
-						x += 1
-	print((x + len(check_all_subjects)))
+#						print(subject)
+						count += 1
+				if not bool(table[day][timeslot][classroom]):
+					count += 1
+	if (len(check_all_subjects)) < int(24):
+		print(len(check_all_subjects), (124-count2))
+#		print(all_timetable_options)
+#		print(len(check_all_subjects) - count)
+#		print(count2)
+#		print(count3)
 
+#		print('minder dan 25 dubbele vakken')
+#		print((parent1, parent2))
+#		print( count , '\n')
 
-#		scheduling(course, timetable, gro_stu_dat, week, timeslots, classroom_info)
+#		print(parent1)
+#		print(parent2)
+#		print(len(check_all_subjects), 'niet geroosterde vakken')
+#		print(x, 'dubbel geroosterde vakken\n')
+
 
 
 def recombine_genes(parent1, parent2, population_all_parents, genes):
@@ -683,34 +703,22 @@ def recombine_genes(parent1, parent2, population_all_parents, genes):
 	recombination_table[days[2]] = table1[days[2]]
 	recombination_table[days[3]] = table2[days[3]]
 	recombination_table[days[4]] = table1[days[4]]
-	check_geldigheid_rooster(recombination_table, genes)
-
-#	time_table_points(time_table, score_total, score_double_students, score_classrooms, score_ditribution_in_week)
-
+	check_geldigheid_rooster(recombination_table, genes, parent1, parent2)
 
 def make_new_generation(old_generation_dict, population_size_per_generation):
 	gene_pool = list(best_scores_random.keys())
 	size_population_parents = len(list(old_generation_dict.keys()))
 	print(size_population_parents)
 	print(size_population_parents + population_size_per_generation)
-#	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
+###	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
 	for i in range(0,population_size_per_generation):
-#		print(size_population_parents)
-#		print(size_population_parents + population_size_per_generation)
 		(gen1, gen2) = take_two_diff_genes(gene_pool)
 		recombine_genes(gen1, gen2, old_generation_dict, gene_pool)
-
-
-#def select_new_population(old_and_new_generation, selection_on_population):
-#	best_scores_random = take_best_scores(best_scores_random, score_total, time_table, i, best_scores_maxsize)
-#	print('check')
 
 #Sla scores op voor de nulde generatie
 score_total_GenAl[0]=[]
 for key in list(best_scores_random.keys()):
-#	print(key)
 	score_total_GenAl[0].append(key)
-
 print(score_total_GenAl)
 
 #Loop over generaties
