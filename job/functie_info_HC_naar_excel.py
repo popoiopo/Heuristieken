@@ -182,4 +182,4 @@ def write_analyse(archive, eva_rounds, n_population, mut_per_eva, para_WG_size):
 	
 
 #functie uitvoeren
-write_analyse(score_total_hillcl, n_mutaties, best_scores_maxsize, n_changes_in_mutation, parameter_workgroupsizes)
+write_analyse(best_scores_hillcl, n_mutaties, best_scores_maxsize, n_changes_in_mutation, parameter_workgroupsizes)
