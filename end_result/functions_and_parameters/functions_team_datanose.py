@@ -226,6 +226,7 @@ def time_table_points2(time_table):
 ##---------------Top time tables ---------------------------------------------##
 
 # Keeps track of best time tables for further use-------------------------------
+###deze functie wordt niet gebruikt dus kan weg...
 def multiple_timetables(time_table):
 	best_time_table = []
 	for i in range(0, 1):
@@ -491,7 +492,7 @@ def take_best_scores3(score, passed_scores, table, x, abc, temperature):
 #check if value is already in priority queue, if so, change value to prevent error
 def unique_score(Score, value):
 	if value in Score:
-		value -= 1
+		value -= 1 ###deze waarde veranderen van 1 naar 0.1
 		unique_score(Score, value)	
 	return value
 
@@ -545,8 +546,18 @@ def check_validity_time_table(table, gene_pool, parent1, parent2, group_student_
 	if (len(check_all_subjects)) < max_faults_in_recombination:
 		for rescedule_subject in check_all_subjects:
 			scheduling(rescedule_subject, table, group_student_database, days_in_week, time_frames , classroom_info)
+###dit toevoegen voor n mutaties, mogelijk als voorwaarde aantal dubbele vakken mee te geven.
+'''
+		if count_double_subjects < mutations_condition_GA:
+			for i in range(0,number_of_mutations_GA):
+				random_subject = delete_random_subject(table)
+				scheduling2(random_subject, table, group_student_database, days_in_week, time_frames, classroom_info)
+'''
 		return True
+###	else:
+###		return False
 
+###Volgens mij wordt deze functie nergens gebruikt... Als dat zo is kan ie weg...
 def mutation(ttable, week, timeslots , classroom_info):
 	day = random.choice(week)
 	time = random.choice(timeslots)
@@ -570,6 +581,7 @@ def recombine_genes(parent1, parent2, population_all_parents, genes, group_stude
 	recombination_table[days[4]] = table1[days[4]]
 	if not bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
 		recombination_table.clear()
+###	else: #ipv elif bool zoals hier onder staat
 	elif bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
 		points = time_table_points2(recombination_table)
 		check_scores = list(population_all_parents.keys())
@@ -582,6 +594,7 @@ def make_new_generation(old_generation_dict, group_student_database):
 	gene_pool = list(old_generation_dict.keys())
 	mean_value_genepool = mean_value(gene_pool)
 	size_population_parents = len(list(old_generation_dict.keys()))
+###	print('print grootte van populatie ouders',size_population_parents)
 	print('Met een gemiddelde waarde van: ' + str(mean_value_genepool))
 	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
 		(gen1, gen2) = take_two_diff_genes(gene_pool)
@@ -591,6 +604,20 @@ def select_new_population(population):
 	old_population = copy.deepcopy(population)
 	population.clear()
 	population_scores = sorted(list(old_population.keys()), reverse = True)
+###dit ipv het oude erin zetten svp. Zo ontstaat een selectie kans ipc beste overerving.
+'''
+	i = 0
+	while len(list(population.keys())) < (selection_on_population):
+		select = selection_function
+		if select > random.random() :
+			key = population_scores[i]
+			population[key] = old_population[key]
+		else:
+#			print('denied')
+			hallo = 0
+		i+=1
+'''	
+###deze 3 regels mogen weg.	
 	for i in range(0,selection_on_population):
 		key = population_scores[i]
 		population[key] = old_population[key]
