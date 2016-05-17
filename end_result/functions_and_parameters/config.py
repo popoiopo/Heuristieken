@@ -18,6 +18,12 @@ n_generations = 10 #creates n generations
 max_faults_in_recombination = 120 #maximum recombination faults is n
 population_size_per_generation = int(3*best_scores_maxsize) #lets population grow until this size before selection is applied
 selection_on_population = int(1*best_scores_maxsize) #growth of population, 1 is constant
+###extra parameter voor GenAl
+'''
+mutations_condition_GA = 10 #condition to add extra mutations
+number_of_mutations_GA = 3 #number of mutations per time
+selection_function = #function for selection change of genetic algorithm as function of i (place is score rank) and I (generation)
+'''
 
 ##---------------Loading and organising CSV files ----------------------------##
 # Loading info out of csv file
