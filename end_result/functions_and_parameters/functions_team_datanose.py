@@ -134,11 +134,11 @@ def score_distr(time_table_week, course, course_info):
 					if(len(compare) == course_activity_counter):
 						check += 1
 				if(check > 0):
-					score += 20
+					score += 20 ###dit moet dus 10 worden ipv 20
 			else:
 				compare = set(time_table_week) & set(ideal_week)
 				if(len(compare) == course_activity_counter):
-					score += 20
+					score += 20 ###dit moet dus 10 worden ipv 20
 	return(score)
 
 # Creates a dict with all the course names--------------------------------------
@@ -176,7 +176,8 @@ def bonus_distribution(time_table, all_subject_names, course_info):
 		course_score = 0
 		if(course_activity_counter > 1):
 			if(groups > 0):
-				group_scores = []
+				group_scores = [] ###delete
+				###group_scores = 0
 				# create time table for each group
 				for j in range(1,(groups + 1)):
 					single_time_table_week = []
@@ -189,8 +190,10 @@ def bonus_distribution(time_table, all_subject_names, course_info):
 							single_time_table_week.append(courses[course][k][:2])
 					#score subgroup
 					single_score = score_distr(single_time_table_week, course, course_info)
-					group_scores.append(single_score)
-				course_score = min(group_scores)
+					group_scores.append(single_score) ###delete
+					###group_scores = group_score + single_score
+				course_score = min(group_scores) ###delete
+				###course_score = group_score
 			else:
 				single_time_table_week = []
 				for l in range(len(courses[course])):
