@@ -4,6 +4,7 @@ This is our config file, where all global parameters will be set.
 """
 ##---------------Loading libraries -------------------------------------------##
 import csv
+import math
 
 ##---------------Parameter values --------------------------------------------##
 # Decides the ratio of emptyness/fullnes of the classrooms
@@ -12,6 +13,11 @@ best_scores_maxsize = 10 #remembers n best random time tables
 n_random_tests = 10 #generates n random time table of which the best (n=best_scores_maxsize) will be remembered
 n_mutaties = 201 #will do n mutations and remembers when new time table has a better score
 print_every_n_mutations = 100 #prints out all max values after n mutations
+n_random_tests_gen = (best_scores_maxsize+1) #generates n amount of random timetablesof which the best (n=best_scores_maxsize + 1) will be remembered
+n_generations = 10 #creates n generations
+max_faults_in_recombination = 120 #maximum recombination faults is n
+population_size_per_generation = int(3*best_scores_maxsize) #lets population grow until this size before selection is applied
+selection_on_population = int(1*best_scores_maxsize) #growth of population, 1 is constant
 
 ##---------------Loading and organising CSV files ----------------------------##
 # Loading info out of csv file
@@ -57,6 +63,60 @@ days_in_week = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag']
 
 time_frames = ['9.00-11.00', '11.00-13.00', '13.00-15.00', '15.00-17.00']
 
+##---------------Filling the courses -----------------------------------------##
+subject_student_database = {}
+for subject in all_subject_names:
+	for student in student_info:
+		number = student['Stud.Nr.']
+		for info in info_student:
+			if number in info:
+				if subject in info:
+					subject_student_database.setdefault(subject, []).append(number)
+
+##---------------Create list of unique courses and students within -----------##
+# Create regular classes, work and practical lessons with string is 
+# studentnumbers of students attending those courses
+group_student_database = {}
+for subject in all_subject_names:
+	for subject_details in course_info:
+		if subject in subject_details.values():
+			subject_student_number = float(len(subject_student_database[subject]))
+			# give lecture unique name and add to list
+			hc = int(subject_details["hoorcolleges"])
+			for i in range(1,hc+1):
+				course_name = "hc_" + str(i) + "_1_" + subject
+				group_student_database[course_name] = subject_student_database[subject]
+			# give work groups unique name and add to list
+			wc = int(subject_details["werkcolleges"])
+			for i in range(1,wc+1):
+				# checks amount of work groups needed depending on parameter
+				# defined on top
+				stud_over_max = subject_student_number / float(subject_details["werk_max_stud"])
+				if (stud_over_max % 1) > parameter_workgroupsizes:
+					wc_number = int(stud_over_max) + 1
+				else:
+					wc_number = int(stud_over_max)
+				check = int(math.ceil((subject_student_number / wc_number)))
+				x = 0
+				# Loop over all work group and make groups of average size
+				for j in range(1,wc_number+1): 
+					course_name = "wc_" + str(i) + "_" + str(j) + "_" + subject
+					group_student_database[course_name] = subject_student_database[subject][x:x+check]
+					x += check
+			pr = int(subject_details["practica"])
+			for i in range(1,pr+1):
+				stud_over_max = subject_student_number / float(subject_details["practica_max_stud"])
+				if (stud_over_max % 1) > parameter_workgroupsizes:
+					pr_number = int(stud_over_max) + 1
+				else:
+					pr_number = int(stud_over_max)
+				check = int(math.ceil((subject_student_number / pr_number)))
+				x = 0
+				for j in range(1,pr_number+1): 
+					course_name = "pr_" + str(i) + "_" + str(j) + "_" + subject
+					group_student_database[course_name] = subject_student_database[subject][x:x+check]
+					x += check
+
 ##---------------Simulated annealing parameters --------------------------------##
 
 temperature = float(1.0)
@@ -64,5 +124,21 @@ e = float(2.71828)
 alpha = float(1) - (float(1) / float(n_mutaties))
 
 ##---------------Empty dict to find best time table ----------------------------##
-
 best_timetable_excel = {}
+
+#scores for random time tables
+score_total = []
+score_double_students = []
+score_classrooms = []
+score_ditribution_in_week = []
+#scores for mutations Hillclimber
+score_total_hillcl = {}
+score_double_students_hillcl = {}
+score_classrooms_hillcl = {}
+score_ditribution_in_week_hillcl = {}
+#scores for first generation
+
+best_scores_random = {} #dict for best n timetables of randomly generated time tables
+best_scores_random = {-1001: 'lala'} #needed trash value to temporary fill dict
+best_scores_hillcl = {} #dict to mutate best n time tables in hillclimber
+best_scores_sim_anneal = {} #dict to mutate best n time tables in simulated annealing

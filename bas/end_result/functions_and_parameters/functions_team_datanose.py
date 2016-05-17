@@ -14,7 +14,6 @@ import xlsxwriter
 import collections
 from config import *
 from copy import deepcopy
-from random import shuffle
 from string import ascii_lowercase
 from fnmatch import fnmatch, fnmatchcase
 
@@ -212,13 +211,6 @@ def time_table_points(time_table, score_total, score_double_students,
 	score_classrooms.append(points_classroom_capa)
 	score_ditribution_in_week.append(points_distr_week)
 	return
-
-def time_table_points2(time_table):
-	points_double_sched = duplicate_student(time_table)
-	points_classroom_capa = minus_classrooms(time_table)
-	points_distr_week = bonus_distribution(time_table, all_subject_names, course_info)
-	points_tot = 1000 + points_double_sched + points_classroom_capa + points_distr_week
-	return points_tot
 
 ##---------------Top time tables ---------------------------------------------##
 
@@ -463,12 +455,14 @@ def take_best_scores2(score, passed_scores, table, x, abc):
 
 def acceptance_probability(temperature, i):
 	#linear simulated annealing
-#	temperature = float(temperature) - (float(1) / float(n_mutaties))
-#	return temperature
+	temperature = float(temperature) - (float(1) / float(n_mutaties))
+	return temperature
 
 	#exponential simulated annealing
-	temperature = float(temperature) * pow(float(alpha), float(i))
-	return temperature
+#	temperature = float(temperature) * pow(float(alpha), float(i))
+#	return temperature
+
+	#
 
 def take_best_scores3(score, passed_scores, table, x, abc, temperature):
 	recent_score = passed_scores.pop(x)
@@ -509,94 +503,3 @@ def delete_random_subject(table):
 			delete = table[day][time][room].pop(check)
 			subject_name = check
 		return subject_name
-
-##-----------------functie voor genetic algotrithmen----------------------##
-def take_two_diff_genes(all_genes):
-	gen1 = random.choice(all_genes)
-	gen2 = random.choice(all_genes)
-	if gen1 == gen2:
-		return take_two_diff_genes(all_genes)
-	return(gen1,gen2)
-
-def check_validity_time_table(table, gene_pool, parent1, parent2, group_student_database):
-	count_unique_subjects = 0
-	count_empty_spaces = 0
-	count_double_subjects = 0
-	count_all_options = 0
-	check_all_subjects = copy.deepcopy(list(group_student_database.keys()))
-	for day in table.keys():
-		for timeslot in table[day].keys():
-			for classroom in table[day][timeslot].keys():
-				count_all_options+=1
-				if not bool(table[day][timeslot][classroom]):
-					count_empty_spaces += 1
-				if bool(table[day][timeslot][classroom]):
-					subject = list(table[day][timeslot][classroom].keys())[0]
-					if subject in check_all_subjects:
-						count_unique_subjects += 1
-						position = check_all_subjects.index(subject)
-						check_all_subjects.pop(position)
-					else:
-						count_double_subjects += 1
-						table[day][timeslot][classroom].pop(subject)
-	if (len(check_all_subjects)) < max_faults_in_recombination:
-		for rescedule_subject in check_all_subjects:
-			scheduling(rescedule_subject, table, group_student_database, days_in_week, time_frames , classroom_info)
-		return True
-
-def mutation(ttable, week, timeslots , classroom_info):
-	day = random.choice(week)
-	time = random.choice(timeslots)
-	room = random.choice(list(classroom_info.keys()))
-	if not bool(timetable[day][time][room]):
-		mutation(ttable, week, timeslots , classroom_info)
-	else:
-		subject = list(table[day][timeslot][classroom].keys())[0]
-		timetable[day][time][room].pop(subject)
-
-def recombine_genes(parent1, parent2, population_all_parents, genes, group_student_database):
-	table1 = copy.deepcopy(population_all_parents[parent1])
-	table2 = copy.deepcopy(population_all_parents[parent2])
-	recombination_table = {}
-	days = list(table1.keys())
-	random.shuffle(days, random.random)
-	recombination_table[days[0]] = table2[days[0]]
-	recombination_table[days[1]] = table1[days[1]]
-	recombination_table[days[2]] = table1[days[2]]
-	recombination_table[days[3]] = table2[days[3]]
-	recombination_table[days[4]] = table1[days[4]]
-	if not bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
-		recombination_table.clear()
-	elif bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
-		points = time_table_points2(recombination_table)
-		check_scores = list(population_all_parents.keys())
-		if points in check_scores:
-			points = unique_score(check_scores, points)
-		population_all_parents[points] = recombination_table
-		return True
-
-def make_new_generation(old_generation_dict, group_student_database):
-	gene_pool = list(old_generation_dict.keys())
-	mean_value_genepool = mean_value(gene_pool)
-	size_population_parents = len(list(old_generation_dict.keys()))
-	print('Met een gemiddelde waarde van: ' + str(mean_value_genepool))
-	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
-		(gen1, gen2) = take_two_diff_genes(gene_pool)
-		recombine_genes(gen1, gen2, old_generation_dict, gene_pool, group_student_database)
-
-def select_new_population(population):
-	old_population = copy.deepcopy(population)
-	population.clear()
-	population_scores = sorted(list(old_population.keys()), reverse = True)
-	for i in range(0,selection_on_population):
-		key = population_scores[i]
-		population[key] = old_population[key]
-
-def mean_value(list_values):
-	size = len(list_values)
-	total = 0
-	mean = 0
-	for i in range(0,size):
-		total += list_values[i]
-	mean = (float(total)/float(size))
-	return mean
