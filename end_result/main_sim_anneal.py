@@ -24,7 +24,7 @@ for i in range(0,n_random_simann):
 				days_in_week, time_frames, classroom_info)
 	time_table_points(time_table, score_total, score_double_students, 
 				score_classrooms, score_ditribution_in_week)
-	best_scores_random = take_best_scores(best_scores_random, score_total, time_table, i, simann_maxsize)
+	random_simann = take_best_scores(random_simann, score_total, time_table, i, simann_maxsize)
 	time_table.clear()
 
 time_2 = time.time()
@@ -32,10 +32,10 @@ x = time_2-time_0
 print('Het duurt ' + str(x) + ' seconden voor het genereren van ' + str(n_random_simann) + ' random roosters.')
 
 print('De beste ' + str(simann_maxsize) + ' roosters zijn bewaard in een dict onder de volgende keys.')
-print(best_scores_random.keys())
+print(random_simann.keys())
 print('Om de Hillclimber te laten werken veranderen we deze keys in:')
 
-keys = list(best_scores_random.keys())
+keys = list(random_simann.keys())
 print keys
 for i in range(0,simann_maxsize):
 	n = str(ascii_lowercase[i])
@@ -44,7 +44,7 @@ for i in range(0,simann_maxsize):
 	score_double_students_simann[n] = [0]
 	score_classrooms_simann[n] = [0]
 	score_ditribution_in_week_simann[n] = [0]
-	best_scores_simann[n] = best_scores_random.pop(key)
+	best_scores_simann[n] = random_simann.pop(key)
 print(best_scores_simann.keys())
 print('Om te weten wat de score is van deze roosters is houden we een list van scores bij\n in een list, opgeslagen in een apparte dict, onder de zelfde key als de roosters:')
 print(score_total_simann)
@@ -69,10 +69,11 @@ while i < n_mutations_simann:
 				print('Het duurt al ' + str(x) + ' seconden')
 			best_score_print = sorted(score_total_simann[key], reverse = True)[0]
 			print('beste score voor rooster ' + str(key) + ' is ' + str(best_score_print))
-			if i == n_mutations_simann - 1:
-				best_timetable_excel[best_score_print] = key
+		if i == n_mutations_simann - 1:
+			best_timetable_excel[best_score_print] = key
 	i += 1
-
+	
+print best_timetable_excel
 best_timetable_write = best_scores_simann[best_timetable_excel[max(best_timetable_excel)]]
 best_score_sheetname = str(max(best_timetable_excel))
 print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")

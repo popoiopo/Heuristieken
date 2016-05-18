@@ -134,11 +134,11 @@ def score_distr(time_table_week, course, course_info):
 					if(len(compare) == course_activity_counter):
 						check += 1
 				if(check > 0):
-					score += 10 
+					score += 20 
 			else:
 				compare = set(time_table_week) & set(ideal_week)
 				if(len(compare) == course_activity_counter):
-					score += 10 
+					score += 20 
 	return(score)
 
 # Creates a dict with all the course names--------------------------------------
@@ -221,6 +221,180 @@ def time_table_points2(time_table):
 	return points_tot
 
 ##---------------Top time tables ---------------------------------------------##
+
+##---------------Remember best n timetables -----------------------------------##
+#compare Ttable score to lowest score of stored Ttables and replace if better.
+def take_best_scores(scores, passed_scores, table, x, max_size):
+	key = sorted(scores.keys())[0]
+	min_value_0 = key
+	min_value_1 = scores.pop(key)
+	Ttable = {}
+	if passed_scores[x] > min_value_0:
+		Ttable = copy.deepcopy(table)
+		if passed_scores[x] in passed_scores[:(x-1)]:
+			check = unique_score(passed_scores, passed_scores[x])
+			passed_scores[x] = check
+		scores[passed_scores[x]] = copy.deepcopy(Ttable)
+		Ttable.clear()
+		if len(scores) < max_size:
+			scores[min_value_0] = copy.deepcopy(min_value_1)
+	else:
+		scores[min_value_0] = copy.deepcopy(min_value_1)
+	return scores
+
+def take_best_scores2(score, passed_scores, table, x, abc):
+	recent_score = passed_scores.pop(x)
+	previous_best_score = sorted(passed_scores, reverse = True)[0]
+	Ttable = {}
+	if recent_score > previous_best_score:
+		Ttable = copy.deepcopy(table)
+		score = copy.deepcopy(Ttable)
+		Ttable.clear()
+	passed_scores.append(recent_score)
+	return score
+
+#Function for acceptance probability for temperature decline--------------------
+def acceptance_probability(temperature, i):
+	#linear simulated annealing
+#	temperature = float(temperature) - (float(1) / float(n_mutaties))
+#	return temperature
+
+	#exponential simulated annealing
+	temperature = float(temperature) * pow(float(alpha), float(i))
+	return temperature
+
+def take_best_scores3(score, passed_scores, table, x, abc, temperature):
+	recent_score = passed_scores.pop(x)
+	previous_best_score = sorted(passed_scores, reverse = True)[0]
+	Ttable = {}
+	if recent_score > previous_best_score:
+		Ttable = copy.deepcopy(table)
+		score = copy.deepcopy(Ttable)
+		Ttable.clear()
+	elif temperature > random.random():
+		Ttable = copy.deepcopy(table)
+		score = copy.deepcopy(Ttable)
+		Ttable.clear()
+	passed_scores.append(recent_score)
+	return score
+
+#check if value is already in priority queue, if so, change value to prevent error
+def unique_score(Score, value):
+	if value in Score:
+		value -= 0.1
+		unique_score(Score, value)	
+	return value
+
+#------------------Mutations on time table -------------------------------------
+def delete_random_subject(table):
+	days = list(table.keys())
+	day = random.choice(days)
+	times = list(table[day].keys())
+	time = random.choice(times)
+	rooms = list(table[day][time].keys())
+	room = random.choice(rooms)
+	if not bool(table[day][time][room]):
+		check = delete_random_subject(table)
+		return check
+	else:
+		subject = copy.deepcopy(table[day][time][room])
+		for check in subject.keys():
+			delete = table[day][time][room].pop(check)
+			subject_name = check
+		return subject_name
+
+#------------------functions for genetic algotrithm-----------------------------
+def take_two_diff_genes(all_genes):
+	gen1 = random.choice(all_genes)
+	gen2 = random.choice(all_genes)
+	if gen1 == gen2:
+		return take_two_diff_genes(all_genes)
+	return(gen1,gen2)
+
+def check_validity_time_table(table, gene_pool, parent1, parent2, group_student_database):
+	count_unique_subjects = 0
+	count_empty_spaces = 0
+	count_double_subjects = 0
+	count_all_options = 0
+	check_all_subjects = copy.deepcopy(list(group_student_database.keys()))
+	for day in table.keys():
+		for timeslot in table[day].keys():
+			for classroom in table[day][timeslot].keys():
+				count_all_options+=1
+				if not bool(table[day][timeslot][classroom]):
+					count_empty_spaces += 1
+				if bool(table[day][timeslot][classroom]):
+					subject = list(table[day][timeslot][classroom].keys())[0]
+					if subject in check_all_subjects:
+						count_unique_subjects += 1
+						position = check_all_subjects.index(subject)
+						check_all_subjects.pop(position)
+					else:
+						count_double_subjects += 1
+						table[day][timeslot][classroom].pop(subject)
+	if (len(check_all_subjects)) < max_faults_in_recombination:
+		for rescedule_subject in check_all_subjects:
+			scheduling(rescedule_subject, table, group_student_database, days_in_week, time_frames , classroom_info)
+		if count_double_subjects < mutations_condition_GA:
+			for i in range(0,number_of_mutations_GA):
+				random_subject = delete_random_subject(table)
+				scheduling2(random_subject, table, group_student_database, days_in_week, time_frames, classroom_info)
+		return True
+	else:
+		return False
+
+def recombine_genes(parent1, parent2, population_all_parents, genes, group_student_database):
+	table1 = copy.deepcopy(population_all_parents[parent1])
+	table2 = copy.deepcopy(population_all_parents[parent2])
+	recombination_table = {}
+	days = list(table1.keys())
+	random.shuffle(days, random.random)
+	recombination_table[days[0]] = table2[days[0]]
+	recombination_table[days[1]] = table1[days[1]]
+	recombination_table[days[2]] = table1[days[2]]
+	recombination_table[days[3]] = table2[days[3]]
+	recombination_table[days[4]] = table1[days[4]]
+	if not bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
+		recombination_table.clear()
+	else:
+		points = time_table_points2(recombination_table)
+		check_scores = list(population_all_parents.keys())
+		if points in check_scores:
+			points = unique_score(check_scores, points)
+		population_all_parents[points] = recombination_table
+		return True
+
+def make_new_generation(old_generation_dict, group_student_database):
+	gene_pool = list(old_generation_dict.keys())
+	mean_value_genepool = mean_value(gene_pool)
+	size_population_parents = len(list(old_generation_dict.keys()))
+#	print('Print grootte van populatie ouders ' + str(size_population_parents))
+#	print('Met een gemiddelde waarde van: ' + str(mean_value_genepool))
+	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
+		(gen1, gen2) = take_two_diff_genes(gene_pool)
+		recombine_genes(gen1, gen2, old_generation_dict, gene_pool, group_student_database)
+
+def select_new_population(population):
+	old_population = copy.deepcopy(population)
+	population.clear()
+	population_scores = sorted(list(old_population.keys()), reverse = True)
+	i = 0
+	while len(list(population.keys())) < (selection_on_population):
+		selection_function = 0.6 + (0.6 / (i + 1))
+		select = selection_function
+		if select > random.random() :
+			key = population_scores[i]
+			population[key] = old_population[key]
+		i+=1
+
+def mean_value(list_values):
+	size = len(list_values)
+	total = 0
+	mean = 0
+	for i in range(0,size):
+		total += list_values[i]
+	mean = (float(total)/float(size))
+	return mean
 
 ##---------------Visualisation functions -------------------------------------##
 
@@ -413,179 +587,6 @@ def excel_schedule(time_table, week, timeslots, classroom_info, best_score_sheet
 							worksheet.write(vr_row_15,6, course)
 							vr_row_15 += 1
 	workbook.close()
-
-##---------------Remember best n timetables -----------------------------------##
-#compare Ttable score to lowest score of stored Ttables and replace if better.
-def take_best_scores(scores, passed_scores, table, x, max_size):
-	key = sorted(scores.keys())[0]
-	min_value_0 = key
-	min_value_1 = scores.pop(key)
-	Ttable = {}
-	if passed_scores[x] > min_value_0:
-		Ttable = copy.deepcopy(table)
-		if passed_scores[x] in passed_scores[:(x-1)]:
-			check = unique_score(passed_scores, passed_scores[x])
-			passed_scores[x] = check
-		scores[passed_scores[x]] = copy.deepcopy(Ttable)
-		Ttable.clear()
-		if len(scores) < max_size:
-			scores[min_value_0] = copy.deepcopy(min_value_1)
-	else:
-		scores[min_value_0] = copy.deepcopy(min_value_1)
-	return scores
-
-def take_best_scores2(score, passed_scores, table, x, abc):
-	recent_score = passed_scores.pop(x)
-	previous_best_score = sorted(passed_scores, reverse = True)[0]
-	Ttable = {}
-	if recent_score > previous_best_score:
-		Ttable = copy.deepcopy(table)
-		score = copy.deepcopy(Ttable)
-		Ttable.clear()
-	passed_scores.append(recent_score)
-	return score
-
-def acceptance_probability(temperature, i):
-	#linear simulated annealing
-#	temperature = float(temperature) - (float(1) / float(n_mutaties))
-#	return temperature
-
-	#exponential simulated annealing
-	temperature = float(temperature) * pow(float(alpha), float(i))
-	return temperature
-
-def take_best_scores3(score, passed_scores, table, x, abc, temperature):
-	recent_score = passed_scores.pop(x)
-	previous_best_score = sorted(passed_scores, reverse = True)[0]
-	Ttable = {}
-	if recent_score > previous_best_score:
-		Ttable = copy.deepcopy(table)
-		score = copy.deepcopy(Ttable)
-		Ttable.clear()
-	elif temperature > random.random():
-		Ttable = copy.deepcopy(table)
-		score = copy.deepcopy(Ttable)
-		Ttable.clear()
-	passed_scores.append(recent_score)
-	return score
-
-#check if value is already in priority queue, if so, change value to prevent error
-def unique_score(Score, value):
-	if value in Score:
-		value -= 0.1
-		unique_score(Score, value)	
-	return value
-
-##-----------------Mutations on time table ------------------------------------##
-def delete_random_subject(table):
-	days = list(table.keys())
-	day = random.choice(days)
-	times = list(table[day].keys())
-	time = random.choice(times)
-	rooms = list(table[day][time].keys())
-	room = random.choice(rooms)
-	if not bool(table[day][time][room]):
-		check = delete_random_subject(table)
-		return check
-	else:
-		subject = copy.deepcopy(table[day][time][room])
-		for check in subject.keys():
-			delete = table[day][time][room].pop(check)
-			subject_name = check
-		return subject_name
-
-##-----------------functie voor genetic algotrithmen----------------------##
-def take_two_diff_genes(all_genes):
-	gen1 = random.choice(all_genes)
-	gen2 = random.choice(all_genes)
-	if gen1 == gen2:
-		return take_two_diff_genes(all_genes)
-	return(gen1,gen2)
-
-def check_validity_time_table(table, gene_pool, parent1, parent2, group_student_database):
-	count_unique_subjects = 0
-	count_empty_spaces = 0
-	count_double_subjects = 0
-	count_all_options = 0
-	check_all_subjects = copy.deepcopy(list(group_student_database.keys()))
-	for day in table.keys():
-		for timeslot in table[day].keys():
-			for classroom in table[day][timeslot].keys():
-				count_all_options+=1
-				if not bool(table[day][timeslot][classroom]):
-					count_empty_spaces += 1
-				if bool(table[day][timeslot][classroom]):
-					subject = list(table[day][timeslot][classroom].keys())[0]
-					if subject in check_all_subjects:
-						count_unique_subjects += 1
-						position = check_all_subjects.index(subject)
-						check_all_subjects.pop(position)
-					else:
-						count_double_subjects += 1
-						table[day][timeslot][classroom].pop(subject)
-	if (len(check_all_subjects)) < max_faults_in_recombination:
-		for rescedule_subject in check_all_subjects:
-			scheduling(rescedule_subject, table, group_student_database, days_in_week, time_frames , classroom_info)
-		if count_double_subjects < mutations_condition_GA:
-			for i in range(0,number_of_mutations_GA):
-				random_subject = delete_random_subject(table)
-				scheduling2(random_subject, table, group_student_database, days_in_week, time_frames, classroom_info)
-		return True
-	else:
-		return False
-
-def recombine_genes(parent1, parent2, population_all_parents, genes, group_student_database):
-	table1 = copy.deepcopy(population_all_parents[parent1])
-	table2 = copy.deepcopy(population_all_parents[parent2])
-	recombination_table = {}
-	days = list(table1.keys())
-	random.shuffle(days, random.random)
-	recombination_table[days[0]] = table2[days[0]]
-	recombination_table[days[1]] = table1[days[1]]
-	recombination_table[days[2]] = table1[days[2]]
-	recombination_table[days[3]] = table2[days[3]]
-	recombination_table[days[4]] = table1[days[4]]
-	if not bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
-		recombination_table.clear()
-	else:
-		points = time_table_points2(recombination_table)
-		check_scores = list(population_all_parents.keys())
-		if points in check_scores:
-			points = unique_score(check_scores, points)
-		population_all_parents[points] = recombination_table
-		return True
-
-def make_new_generation(old_generation_dict, group_student_database):
-	gene_pool = list(old_generation_dict.keys())
-	mean_value_genepool = mean_value(gene_pool)
-	size_population_parents = len(list(old_generation_dict.keys()))
-	print('Print grootte van populatie ouders ' + str(size_population_parents))
-	print('Met een gemiddelde waarde van: ' + str(mean_value_genepool))
-	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
-		(gen1, gen2) = take_two_diff_genes(gene_pool)
-		recombine_genes(gen1, gen2, old_generation_dict, gene_pool, group_student_database)
-
-def select_new_population(population):
-	old_population = copy.deepcopy(population)
-	population.clear()
-	population_scores = sorted(list(old_population.keys()), reverse = True)
-	i = 0
-	while len(list(population.keys())) < (selection_on_population):
-		selection_function = 0.6 + (0.6 / (i + 1))
-		select = selection_function
-		if select > random.random() :
-			key = population_scores[i]
-			population[key] = old_population[key]
-		i+=1
-
-def mean_value(list_values):
-	size = len(list_values)
-	total = 0
-	mean = 0
-	for i in range(0,size):
-		total += list_values[i]
-	mean = (float(total)/float(size))
-	return mean
 
 def write_analyse(archive, eva_rounds, n_population, mut_per_eva, para_WG_size, file_name):
 	max_list = []

@@ -17,7 +17,7 @@ from functions_team_datanose import *
 
 time_0 = time.time() #starting timer to keep track of execution duration 
 ##---------------As of now all timetables are random and valid ---------------##
-for i in range(0,n_random_test):
+for i in range(0,(n_random_test+1)):
 	time_table = empty_timetable(days_in_week, time_frames, classroom_info)
 	time_table = make_random_timetable(time_table, group_student_database, 
 				days_in_week, time_frames, classroom_info)
@@ -28,7 +28,7 @@ for i in range(0,n_random_test):
 
 time_2 = time.time()
 x = time_2-time_0
-print('Het duurt ' + str(x) + ' seconden voor het genereren van ' + str(n_random_test - 1) + ' random roosters.')
+print('Het duurt ' + str(x) + ' seconden voor het genereren van ' + str(n_random_test) + ' random roosters.')
 
 best_timetable_write = best_scores_random[max(best_scores_random.keys())]
 best_score_sheetname = str(max(best_scores_random.keys()))

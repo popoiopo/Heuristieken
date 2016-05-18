@@ -48,7 +48,7 @@ print('Om te weten wat de score is van deze roosters is houden we een list van s
 print(score_total_hillcl)
 print('Ook de subscores van score_double_students, score_classrooms en score_ditribution_in_week zijn zo opgeslagen.')
 
-print('Nu gaan we een aantal mutaties proberen. De parameter n_mutaties geeft aan hoe vaak we dit doen.')
+print('Nu gaan we een aantal mutaties proberen. De parameter n_mutations_hillcl geeft aan hoe vaak we dit doen.')
 i = 1
 while i < n_mutations_hillcl:
 	for j in range(0,hillcl_maxsize):
@@ -75,7 +75,7 @@ best_score_sheetname = str(max(best_timetable_excel))
 print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")
 print ("Deze kan je in de map vinden onder: best_hill_climb.xlsx")
 excel_schedule(best_timetable_write, days_in_week, time_frames, classroom_info, best_score_sheetname, "best_hill_climb.xlsx")
-write_analyse(score_total_hillcl, n_mutaties, hillcl_maxsize, 1, parameter_workgroupsizes, "analyse_hill_climb.xlsx")
+write_analyse(score_total_hillcl, n_mutations_hillcl, hillcl_maxsize, 1, parameter_workgroupsizes, "analyse_hill_climb.xlsx")
 
 time_n = time.time()
 x = time_n - time_0

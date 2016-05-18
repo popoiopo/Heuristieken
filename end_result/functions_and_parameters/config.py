@@ -16,15 +16,15 @@ score_ditribution_in_week = []
 parameter_workgroupsizes = 0.21 #0.41 and 0.61 are also interesting values
 
 ##-------------Parameters Random-------------------------##
-n_random_tests = 5000 #generates n random time table of which the best (n=best_scores_maxsize) will be remembered
-best_scores_maxsize_random = 10 #remembers n best random time tables
+n_random_test = 5000 #generates n random time table of which the best (n=best_scores_maxsize) will be remembered
+best_scores_maxsize_random = 26 #remembers n best random time tables
 #scores for random timetables
 best_scores_random = {-100001: 'lala'} #dict for best n timetables of randomly generated time tables
-'''
+
 ##-------------Parameters HillCl-------------------------##
 n_random_hillcl = 27 #number of random tables, takes hillcl_maxsize bests to develop
 hillcl_maxsize = 26 #maximum of best tables to develop !!can't be bigger then 26!!
-n_mutations_hillcl = 5000 #number of mutations per table
+n_mutations_hillcl = 5001 #number of mutations per table
 print_every_n_mutations_hillcl = 1000 #prints out all max values after n mutations
 #scores for mutations Hillclimber
 random_hillcl = {-100001: 'lala'} #dict of best random generated tables voor hillclimber
@@ -37,7 +37,7 @@ score_ditribution_in_week_hillcl = {}
 ##-------------Parameters SimAnnealing-------------------##
 n_random_simann = 27
 simann_maxsize = 26
-n_mutations_simann = 5000
+n_mutations_simann = 5001
 print_every_n_mutations_simann = 1000
 temperature = float(1.0)
 e = float(2.71828)
@@ -51,16 +51,17 @@ score_classrooms_simann = {}
 score_ditribution_in_week_simann = {}
 
 ##-------------Parameters GenAl--------------------------##
-n_random_gen = 41 #generates n-1 amount of random timetables for first parent population
-n_generations = 10 #creates n generations
+n_random_gen = 26 #generates n-1 amount of random timetables for first parent population
+n_generations = 800 #creates n generations
+print_every_n_mutations_genal = 100
 population_size_per_generation = int(3*n_random_gen) #lets population grow until this size before selection is applied
 selection_on_population = int(1*n_random_gen) #growth of population, 1 is constant parent population per generation
-mutations_condition_GA = 10 #make mutations when n subjects are missing
-number_of_mutations_GA = 3 #number of mutations
+mutations_condition_GA = 120 #make mutations when n subjects are missing
+number_of_mutations_GA = 1 #number of mutations
 #scores for mutations Hillclimber
 max_faults_in_recombination = 120 #maximum recombination faults is n recombined table
 best_scores_gen = {-100001: 'lala'} #dict of best tables per generation, initial value to compare tables
-'''
+#'''
 ##---------------Loading and organising CSV files ----------------------------##
 # Loading info out of csv file
 student_scheduling	= open("studenten_roostering.csv")
