@@ -6,24 +6,61 @@ This is our config file, where all global parameters will be set.
 import csv
 import math
 
-##---------------Parameter values --------------------------------------------##
+##----------------General Parameters and lists--------------------------------##
+best_timetable_excel = {}
+score_total = []
+score_double_students = []
+score_classrooms = []
+score_ditribution_in_week = []
 # Decides the ratio of emptyness/fullnes of the classrooms
 parameter_workgroupsizes = 0.21 #0.41 and 0.61 are also interesting values
-best_scores_maxsize = 10 #remembers n best random time tables
-n_random_tests = 10 #generates n random time table of which the best (n=best_scores_maxsize) will be remembered
-n_mutaties = 10001 #will do n mutations and remembers when new time table has a better score
-print_every_n_mutations = 1000 #prints out all max values after n mutations
-n_changes_in_mutation = 1 #amount of mutations
 
-n_random_tests_gen = (best_scores_maxsize+1) #generates n amount of random timetablesof which the best (n=best_scores_maxsize + 1) will be remembered
+##-------------Parameters Random-------------------------##
+n_random_tests = 5000 #generates n random time table of which the best (n=best_scores_maxsize) will be remembered
+best_scores_maxsize_random = 10 #remembers n best random time tables
+#scores for random timetables
+best_scores_random = {-100001: 'lala'} #dict for best n timetables of randomly generated time tables
+'''
+##-------------Parameters HillCl-------------------------##
+n_random_hillcl = 27 #number of random tables, takes hillcl_maxsize bests to develop
+hillcl_maxsize = 26 #maximum of best tables to develop !!can't be bigger then 26!!
+n_mutations_hillcl = 5000 #number of mutations per table
+print_every_n_mutations_hillcl = 1000 #prints out all max values after n mutations
+#scores for mutations Hillclimber
+random_hillcl = {-100001: 'lala'} #dict of best random generated tables voor hillclimber
+best_scores_hillcl = {} #dict to mutate best n time tables in hillclimber
+score_total_hillcl = {}
+score_double_students_hillcl = {}
+score_classrooms_hillcl = {}
+score_ditribution_in_week_hillcl = {}
+
+##-------------Parameters SimAnnealing-------------------##
+n_random_simann = 27
+simann_maxsize = 26
+n_mutations_simann = 5000
+print_every_n_mutations_simann = 1000
+temperature = float(1.0)
+e = float(2.71828)
+alpha = float(1) - (float(1) / float(n_mutations_simann))
+#scores for mutations SimulatedAnnealing
+random_simann = {-100001: 'lala'} #dict of best random generated tables voor SimulatedAnnealing
+best_scores_simann = {} #dict to mutate best n time tables in SimulatedAnnealing
+score_total_simann = {}
+score_double_students_simann = {}
+score_classrooms_simann = {}
+score_ditribution_in_week_simann = {}
+
+##-------------Parameters GenAl--------------------------##
+n_random_gen = 41 #generates n-1 amount of random timetables for first parent population
 n_generations = 10 #creates n generations
-max_faults_in_recombination = 120 #maximum recombination faults is n
-population_size_per_generation = int(3*best_scores_maxsize) #lets population grow until this size before selection is applied
-selection_on_population = int(1*best_scores_maxsize) #growth of population, 1 is constant
-###extra parameter voor GenAl
-mutations_condition_GA = 10 #condition to add extra mutations
-number_of_mutations_GA = 3 #number of mutations per time
-
+population_size_per_generation = int(3*n_random_gen) #lets population grow until this size before selection is applied
+selection_on_population = int(1*n_random_gen) #growth of population, 1 is constant parent population per generation
+mutations_condition_GA = 10 #make mutations when n subjects are missing
+number_of_mutations_GA = 3 #number of mutations
+#scores for mutations Hillclimber
+max_faults_in_recombination = 120 #maximum recombination faults is n recombined table
+best_scores_gen = {-100001: 'lala'} #dict of best tables per generation, initial value to compare tables
+'''
 ##---------------Loading and organising CSV files ----------------------------##
 # Loading info out of csv file
 student_scheduling	= open("studenten_roostering.csv")
@@ -121,29 +158,3 @@ for subject in all_subject_names:
 					course_name = "pr_" + str(i) + "_" + str(j) + "_" + subject
 					group_student_database[course_name] = subject_student_database[subject][x:x+check]
 					x += check
-
-##---------------Simulated annealing parameters --------------------------------##
-
-temperature = float(1.0)
-e = float(2.71828)
-alpha = float(1) - (float(1) / float(n_mutaties))
-
-##---------------Empty dict to find best time table ----------------------------##
-best_timetable_excel = {}
-
-#scores for random time tables
-score_total = []
-score_double_students = []
-score_classrooms = []
-score_ditribution_in_week = []
-#scores for mutations Hillclimber
-score_total_hillcl = {}
-score_double_students_hillcl = {}
-score_classrooms_hillcl = {}
-score_ditribution_in_week_hillcl = {}
-#scores for first generation
-
-best_scores_random = {} #dict for best n timetables of randomly generated time tables
-best_scores_random = {-1001: 'lala'} #needed trash value to temporary fill dict
-best_scores_hillcl = {} #dict to mutate best n time tables in hillclimber
-best_scores_sim_anneal = {} #dict to mutate best n time tables in simulated annealing
