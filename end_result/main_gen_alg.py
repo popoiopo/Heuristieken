@@ -16,8 +16,9 @@ from config import *
 from functions_team_datanose import *
 
 time_0 = time.time() #starting timer to keep track of execution duration 
+
 ##---------------As of now all timetables are random and valid ---------------##
-#maak n_radom_tests timetables, bewaar de best_scores_maxsize beste daarvan
+#create n_random_tests timetables, and save the best best_scores_maxsize 
 for i in range(0,n_random_tests_gen):
 	time_table = empty_timetable(days_in_week, time_frames, classroom_info)
 	time_table = make_random_timetable(time_table, group_student_database, 
@@ -33,7 +34,7 @@ print('Het duurt ' + str(x) + ' seconden voor het genereren van ' + str(n_random
 print('De beste ' + str(best_scores_maxsize) + ' roosters zijn bewaard in een dict onder de volgende keys.')
 print(best_scores_random.keys())
 
-#Loop over generaties
+#Loop over generations
 I = 1
 while I < (n_generations + 1):
 	print('Generation ' + str(I))

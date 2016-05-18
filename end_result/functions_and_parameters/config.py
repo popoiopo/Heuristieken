@@ -13,6 +13,8 @@ best_scores_maxsize = 10 #remembers n best random time tables
 n_random_tests = 10 #generates n random time table of which the best (n=best_scores_maxsize) will be remembered
 n_mutaties = 201 #will do n mutations and remembers when new time table has a better score
 print_every_n_mutations = 100 #prints out all max values after n mutations
+n_changes_in_mutation = 1 #amount of mutations
+
 n_random_tests_gen = (best_scores_maxsize+1) #generates n amount of random timetablesof which the best (n=best_scores_maxsize + 1) will be remembered
 n_generations = 10 #creates n generations
 max_faults_in_recombination = 120 #maximum recombination faults is n

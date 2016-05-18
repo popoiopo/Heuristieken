@@ -35,6 +35,7 @@ best_score_sheetname = str(max(best_scores_random.keys()))
 print "Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!"
 print "Deze kan je in de map vinden onder: best_random.xlsx"
 excel_schedule(best_timetable_write, days_in_week, time_frames, classroom_info, best_score_sheetname, "best_random.xlsx")
+#write_analyse(score_total_hillcl, n_mutaties, best_scores_maxsize, n_changes_in_mutation, parameter_workgroupsizes, "analyse_random.xlsx")
 
 time_n = time.time()
 x = time_n - time_0
