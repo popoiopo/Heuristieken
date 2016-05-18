@@ -11,8 +11,8 @@ import math
 parameter_workgroupsizes = 0.21 #0.41 and 0.61 are also interesting values
 best_scores_maxsize = 10 #remembers n best random time tables
 n_random_tests = 10 #generates n random time table of which the best (n=best_scores_maxsize) will be remembered
-n_mutaties = 201 #will do n mutations and remembers when new time table has a better score
-print_every_n_mutations = 100 #prints out all max values after n mutations
+n_mutaties = 10001 #will do n mutations and remembers when new time table has a better score
+print_every_n_mutations = 1000 #prints out all max values after n mutations
 n_changes_in_mutation = 1 #amount of mutations
 
 n_random_tests_gen = (best_scores_maxsize+1) #generates n amount of random timetablesof which the best (n=best_scores_maxsize + 1) will be remembered
@@ -21,11 +21,8 @@ max_faults_in_recombination = 120 #maximum recombination faults is n
 population_size_per_generation = int(3*best_scores_maxsize) #lets population grow until this size before selection is applied
 selection_on_population = int(1*best_scores_maxsize) #growth of population, 1 is constant
 ###extra parameter voor GenAl
-'''
 mutations_condition_GA = 10 #condition to add extra mutations
 number_of_mutations_GA = 3 #number of mutations per time
-selection_function = #function for selection change of genetic algorithm as function of i (place is score rank) and I (generation)
-'''
 
 ##---------------Loading and organising CSV files ----------------------------##
 # Loading info out of csv file

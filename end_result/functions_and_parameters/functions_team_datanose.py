@@ -134,11 +134,11 @@ def score_distr(time_table_week, course, course_info):
 					if(len(compare) == course_activity_counter):
 						check += 1
 				if(check > 0):
-					score += 20 ###dit moet dus 10 worden ipv 20
+					score += 10 
 			else:
 				compare = set(time_table_week) & set(ideal_week)
 				if(len(compare) == course_activity_counter):
-					score += 20 ###dit moet dus 10 worden ipv 20
+					score += 10 
 	return(score)
 
 # Creates a dict with all the course names--------------------------------------
@@ -176,8 +176,7 @@ def bonus_distribution(time_table, all_subject_names, course_info):
 		course_score = 0
 		if(course_activity_counter > 1):
 			if(groups > 0):
-				group_scores = [] ###delete
-				###group_scores = 0
+				group_scores = 0
 				# create time table for each group
 				for j in range(1,(groups + 1)):
 					single_time_table_week = []
@@ -190,10 +189,8 @@ def bonus_distribution(time_table, all_subject_names, course_info):
 							single_time_table_week.append(courses[course][k][:2])
 					#score subgroup
 					single_score = score_distr(single_time_table_week, course, course_info)
-					group_scores.append(single_score) ###delete
-					###group_scores = group_score + single_score
-				course_score = min(group_scores) ###delete
-				###course_score = group_score
+					group_scores = group_scores + single_score
+				course_score = group_scores
 			else:
 				single_time_table_week = []
 				for l in range(len(courses[course])):
@@ -224,23 +221,6 @@ def time_table_points2(time_table):
 	return points_tot
 
 ##---------------Top time tables ---------------------------------------------##
-
-# Keeps track of best time tables for further use-------------------------------
-###deze functie wordt niet gebruikt dus kan weg...
-def multiple_timetables(time_table):
-	best_time_table = []
-	for i in range(0, 1):
-		for subject in list(group_student_database.keys()):
-			scheduling(subject, random_timetable, student_database, week, timeslots, classroom_info)
-		if not best_time_table:
-			best_time_table = deepcopy(time_table)
-		highest_score = time_table_points(best_time_table)
-		new_score = time_table_points(time_table)
-		if highest_score < new_score:
-			best_time_table = deepcopy(time_table)
-			highest_score = time_table_points(best_time_table)
-		time_table.clear()
-	return highest_score, best_time_table
 
 ##---------------Visualisation functions -------------------------------------##
 
@@ -492,7 +472,7 @@ def take_best_scores3(score, passed_scores, table, x, abc, temperature):
 #check if value is already in priority queue, if so, change value to prevent error
 def unique_score(Score, value):
 	if value in Score:
-		value -= 1 ###deze waarde veranderen van 1 naar 0.1
+		value -= 0.1
 		unique_score(Score, value)	
 	return value
 
@@ -546,27 +526,13 @@ def check_validity_time_table(table, gene_pool, parent1, parent2, group_student_
 	if (len(check_all_subjects)) < max_faults_in_recombination:
 		for rescedule_subject in check_all_subjects:
 			scheduling(rescedule_subject, table, group_student_database, days_in_week, time_frames , classroom_info)
-###dit toevoegen voor n mutaties, mogelijk als voorwaarde aantal dubbele vakken mee te geven.
-'''
 		if count_double_subjects < mutations_condition_GA:
 			for i in range(0,number_of_mutations_GA):
 				random_subject = delete_random_subject(table)
 				scheduling2(random_subject, table, group_student_database, days_in_week, time_frames, classroom_info)
-'''
 		return True
-###	else:
-###		return False
-
-###Volgens mij wordt deze functie nergens gebruikt... Als dat zo is kan ie weg...
-def mutation(ttable, week, timeslots , classroom_info):
-	day = random.choice(week)
-	time = random.choice(timeslots)
-	room = random.choice(list(classroom_info.keys()))
-	if not bool(timetable[day][time][room]):
-		mutation(ttable, week, timeslots , classroom_info)
 	else:
-		subject = list(table[day][timeslot][classroom].keys())[0]
-		timetable[day][time][room].pop(subject)
+		return False
 
 def recombine_genes(parent1, parent2, population_all_parents, genes, group_student_database):
 	table1 = copy.deepcopy(population_all_parents[parent1])
@@ -581,8 +547,7 @@ def recombine_genes(parent1, parent2, population_all_parents, genes, group_stude
 	recombination_table[days[4]] = table1[days[4]]
 	if not bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
 		recombination_table.clear()
-###	else: #ipv elif bool zoals hier onder staat
-	elif bool(check_validity_time_table(recombination_table, genes, parent1, parent2, group_student_database)):
+	else:
 		points = time_table_points2(recombination_table)
 		check_scores = list(population_all_parents.keys())
 		if points in check_scores:
@@ -594,7 +559,7 @@ def make_new_generation(old_generation_dict, group_student_database):
 	gene_pool = list(old_generation_dict.keys())
 	mean_value_genepool = mean_value(gene_pool)
 	size_population_parents = len(list(old_generation_dict.keys()))
-###	print('print grootte van populatie ouders',size_population_parents)
+	print('Print grootte van populatie ouders ' + str(size_population_parents))
 	print('Met een gemiddelde waarde van: ' + str(mean_value_genepool))
 	while len(list(old_generation_dict.keys())) < (size_population_parents + population_size_per_generation):
 		(gen1, gen2) = take_two_diff_genes(gene_pool)
@@ -604,23 +569,14 @@ def select_new_population(population):
 	old_population = copy.deepcopy(population)
 	population.clear()
 	population_scores = sorted(list(old_population.keys()), reverse = True)
-###dit ipv het oude erin zetten svp. Zo ontstaat een selectie kans ipc beste overerving.
-'''
 	i = 0
 	while len(list(population.keys())) < (selection_on_population):
+		selection_function = 0.6 + (0.6 / (i + 1))
 		select = selection_function
 		if select > random.random() :
 			key = population_scores[i]
 			population[key] = old_population[key]
-		else:
-#			print('denied')
-			hallo = 0
 		i+=1
-'''	
-###deze 3 regels mogen weg.	
-	for i in range(0,selection_on_population):
-		key = population_scores[i]
-		population[key] = old_population[key]
 
 def mean_value(list_values):
 	size = len(list_values)

@@ -5,7 +5,7 @@ Lectures & Lesroosters
 Bas Chatel
 10246215
 Bram Sloots
-
+10017887
 Job Huisman
 
 """
@@ -48,8 +48,8 @@ while I < (n_generations + 1):
 
 best_timetable_write = best_scores_random[best_score]
 best_score_sheetname = str(best_score)
-print "Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!"
-print "Deze kan je in de map vinden onder: best_gen_alg.xlsx"
+print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")
+print ("Deze kan je in de map vinden onder: best_gen_alg.xlsx")
 excel_schedule(best_timetable_write, days_in_week, time_frames, classroom_info, best_score_sheetname, "best_gen_alg.xlsx")
 
 time_n = time.time()

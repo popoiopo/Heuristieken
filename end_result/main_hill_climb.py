@@ -5,7 +5,7 @@ Lectures & Lesroosters
 Bas Chatel
 10246215
 Bram Sloots
-
+10017887
 Job Huisman
 
 """
@@ -72,9 +72,8 @@ while i < n_mutaties:
 
 best_timetable_write = best_scores_hillcl[best_timetable_excel[max(best_timetable_excel)]]
 best_score_sheetname = str(max(best_timetable_excel))
-###haakjes om print @ twee regels hier onder
-print "Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!"
-print "Deze kan je in de map vinden onder: best_hill_climb.xlsx"
+print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")
+print ("Deze kan je in de map vinden onder: best_hill_climb.xlsx")
 excel_schedule(best_timetable_write, days_in_week, time_frames, classroom_info, best_score_sheetname, "best_hill_climb.xlsx")
 write_analyse(score_total_hillcl, n_mutaties, best_scores_maxsize, n_changes_in_mutation, parameter_workgroupsizes, "analyse_hill_climb.xlsx")
 

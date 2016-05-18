@@ -5,7 +5,7 @@ Lectures & Lesroosters
 Bas Chatel
 10246215
 Bram Sloots
-
+10017887
 Job Huisman
 
 """
@@ -32,8 +32,8 @@ print('Het duurt ' + str(x) + ' seconden voor het genereren van ' + str(n_mutati
 
 best_timetable_write = best_scores_random[max(best_scores_random.keys())]
 best_score_sheetname = str(max(best_scores_random.keys()))
-print "Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!"
-print "Deze kan je in de map vinden onder: best_random.xlsx"
+print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")
+print ("Deze kan je in de map vinden onder: best_random.xlsx")
 excel_schedule(best_timetable_write, days_in_week, time_frames, classroom_info, best_score_sheetname, "best_random.xlsx")
 #write_analyse(score_total_hillcl, n_mutaties, best_scores_maxsize, n_changes_in_mutation, parameter_workgroupsizes, "analyse_random.xlsx")
 
