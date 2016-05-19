@@ -7,7 +7,7 @@ save to be exported to the main file.
 import math
 import time
 import copy
-import queue
+#import queue
 import config
 import random
 import xlsxwriter
@@ -400,7 +400,7 @@ def mean_value(list_values):
 
 # Writes a schedule to a readable format in excel-------------------------------
 def excel_schedule(time_table, week, timeslots, classroom_info, best_score_sheetname, filename):
-	print "writing to excel..."
+	print ("writing to excel...")
 
 	# Create an new Excel file and add a worksheet.
 	workbook = xlsxwriter.Workbook(filename)
@@ -709,3 +709,97 @@ def write_analyse(archive, eva_rounds, n_population, mut_per_eva, para_WG_size, 
 			worksheet.write(row, col, buffer_it)
 			col += 1
 		row += 1
+
+### toevoeging wegschrijffunctie Job
+
+def rand_roosters_analyse(archive_total, archive_best, population, score_to_remember, algorithm, file_name):
+
+	average_total = 0
+	max_total = 0
+
+	score_list_selection = []
+	average_selection = 0
+	max_selection = 0
+
+	for scores in archive_best.keys():
+		score_list_selection.append(scores)
+
+	n_schedules_best = len(archive_best)
+
+	average_selection = (sum(score_list_selection))/n_schedules_best
+	max_selection = max(score_list_selection)
+
+	n_schedules_total = len(archive_total)
+
+	average_total = (sum(archive_total)) / n_schedules_total
+	max_total = max(archive_total)
+
+	# write average per round, maxuitkomsten, history naar excell
+	# Create an new Excel file and add a worksheet.
+	workbook = xlsxwriter.Workbook(file_name)
+	worksheet = workbook.add_worksheet()
+
+	# creates empty time table
+	col = 0
+	row = 0
+	
+	worksheet.write(row, col, algorithm)
+	worksheet.write(row+1, col, "total_pop")
+	worksheet.write(row+2, col, "pop_selection")
+
+	worksheet.write(row+1, col+1, population)
+	worksheet.write(row+2, col+1, score_to_remember)
+	
+	row += 4
+
+	worksheet.write(row, col, "max selection")
+	row += 1
+
+	worksheet.write(row, col, max_selection)
+	row += 1
+
+	worksheet.write(row, col, "ave selection")
+	row += 1
+
+	worksheet.write(row, col, average_selection)
+	row += 1	
+
+	worksheet.write(row, col, "scores selection")
+	row += 1
+
+	print(score_list_selection)
+
+	for i in range(0, len(score_list_selection)):
+		buffer_it = score_list_selection[i]
+		worksheet.write(row, col, buffer_it)
+		col += 1
+
+	col = 0
+	row += 1	
+
+	worksheet.write(row, col, "max total")
+	row += 1
+
+	worksheet.write(row, col, max_total)
+	row += 1
+
+	worksheet.write(row, col, "ave total")
+	row += 1
+
+	worksheet.write(row, col, average_total)
+	row += 1	
+
+	worksheet.write(row, col, "scores total")
+	row += 1
+
+	print(archive_total)
+
+	for i in range(0, len(archive_total)):
+		buffer_it = archive_total[i]
+		worksheet.write(row, col, buffer_it)
+		col += 1
+
+	col = 0
+	row += 1	
+
+### einde

@@ -41,3 +41,8 @@ time_n = time.time()
 x = time_n - time_0
 print('Het duurt ' + str(x) + ' seconden voor het hele programma.')
 student_scheduling.close()
+
+
+#### wegschrijven voor analyse, aanroepen
+rand_roosters_analyse(score_total, best_scores_random, n_random_test, best_scores_maxsize_random, "Random","Analyse_random.xlsx")
+### einde
