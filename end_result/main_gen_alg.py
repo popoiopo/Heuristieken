@@ -34,40 +34,32 @@ x = time_2-time_0
 print('Het duurt ' + str(x) + ' seconden voor het genereren van ' + str(n_random_gen) + ' random roosters.')
 print('De beste ' + str((n_random_gen)) + ' roosters zijn bewaard in een dict onder de volgende keys.')
 print(best_scores_gen.keys())
-###begin
+###Dit is toevevoegd om beginpopulatie op te slaan
 score_total_gen = {}
-keys = list(best_scores_gen.keys())
+keys = sorted(list(best_scores_gen.keys()), reverse = True)
 for i in range(0,n_random_gen):
-	n = str(ascii_lowercase[i])
+	n = ascii_lowercase[i]
 	key = keys[i]
 	score_total_gen[n] = [key]
+##eind
 I = 1
 while I < (n_generations + 1):
+	make_new_generation(best_scores_gen, group_student_database)
+	select_new_population(best_scores_gen)
+	###dit is toegevoegd om generatie progressie op te slaan om later weg te schrijven
 	scores_generation = sorted(list(best_scores_gen.keys()), reverse = True)
 	for i in range(0,len(scores_generation)):
 		n = str(ascii_lowercase[i])
 		key = scores_generation[i]
 		score_total_gen[n].append(key)
+	###eind
 	if I % print_every_n_mutations_genal == 0:
 		print('Generation ' + str(I))
 		print(scores_generation)
-	make_new_generation(best_scores_gen, group_student_database)
-	select_new_population(best_scores_gen)
 	I += 1
 ###eind
-'''
-#Loop over generations
-I = 1
-while I < (n_generations + 1):
-	scores_generation = list(best_scores_gen.keys())
-	if I % print_every_n_mutations_genal == 0:
-		print('Generation ' + str(I))
-		print(sorted(scores_generation, reverse = True))
-	make_new_generation(best_scores_gen, group_student_database)
-	select_new_population(best_scores_gen)
-	I += 1
-'''
-scores_generation = list(best_scores_gen.keys())
+
+scores_generation = sorted(list(best_scores_gen.keys()), reverse = True) ###dit is gesorteerd zo :P
 print ("Last generation ") 
 print (scores_generation)
 best_score = max(scores_generation)
@@ -77,8 +69,8 @@ best_score_sheetname = str(best_score)
 print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")
 print ("Deze kan je in de map vinden onder: best_gen_alg.xlsx")
 excel_schedule(best_timetable_write, days_in_week, time_frames, classroom_info, best_score_sheetname, "best_gen_alg.xlsx")
-### regel hieronder
-write_analyse(score_total_gen, n_generations, n_random_gen, 1, parameter_workgroupsizes, "analyse_hill_climb.xlsx")
+### regel hieronder is om scores weg te schijven
+write_analyse(score_total_gen, n_generations, n_random_gen, 1, parameter_workgroupsizes, "analyse_gen_alg.xlsx")
 
 time_n = time.time()
 x = time_n - time_0
