@@ -35,14 +35,11 @@ best_score_sheetname = str(max(best_scores_random.keys()))
 print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")
 print ("Deze kan je in de map vinden onder: best_random.xlsx")
 excel_schedule(best_timetable_write, days_in_week, time_frames, classroom_info, best_score_sheetname, "best_random.xlsx")
-#write_analyse(score_total_hillcl, n_random_tests, best_scores_maxsize_random, n_changes_in_mutation, parameter_workgroupsizes, "analyse_random.xlsx")
+print ("Analyse kan je in de map vinden onder: analyse_random.xlsx")
+rand_roosters_analyse(score_total, best_scores_random, n_random_test, best_scores_maxsize_random, "Random","analyse_random.xlsx")
 
 time_n = time.time()
 x = time_n - time_0
 print('Het duurt ' + str(x) + ' seconden voor het hele programma.')
 student_scheduling.close()
 
-
-#### wegschrijven voor analyse, aanroepen
-rand_roosters_analyse(score_total, best_scores_random, n_random_test, best_scores_maxsize_random, "Random","Analyse_random.xlsx")
-### einde

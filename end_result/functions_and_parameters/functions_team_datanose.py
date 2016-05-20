@@ -710,8 +710,6 @@ def write_analyse(archive, eva_rounds, n_population, mut_per_eva, para_WG_size, 
 			col += 1
 		row += 1
 
-### toevoeging wegschrijffunctie Job
-
 def rand_roosters_analyse(archive_total, archive_best, population, score_to_remember, algorithm, file_name):
 
 	average_total = 0
@@ -801,5 +799,3 @@ def rand_roosters_analyse(archive_total, archive_best, population, score_to_reme
 
 	col = 0
 	row += 1	
-
-### einde
