@@ -260,7 +260,8 @@ def acceptance_probability(temperature, i):
 #	return temperature
 
 	#exponential simulated annealing
-	temperature = float(temperature) * pow(float(alpha), float(i))
+	temperature = float(1) * pow(float(alpha), float(i))
+	#print temperature
 	return temperature
 
 def take_best_scores3(score, passed_scores, table, x, abc, temperature):

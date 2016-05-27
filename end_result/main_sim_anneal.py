@@ -73,8 +73,8 @@ while i < n_mutations_simann:
 			best_timetable_excel[best_score_print] = key
 	i += 1
 	
-print best_timetable_excel
 best_timetable_write = best_scores_simann[best_timetable_excel[max(best_timetable_excel)]]
+print sum(best_timetable_excel) / len(best_timetable_excel)
 best_score_sheetname = str(max(best_timetable_excel))
 print ("Ons uiteindelijke beste score is " + best_score_sheetname + " punten waard!")
 print ("Deze kan je in de map vinden onder: best_sim_anneal.xlsx")

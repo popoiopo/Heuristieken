@@ -24,8 +24,8 @@ best_scores_random = {-100001: 'lala'} #dict for best n timetables of randomly g
 ##-------------Parameters HillCl-------------------------##
 n_random_hillcl = 27 #number of random tables, takes hillcl_maxsize bests to develop
 hillcl_maxsize = 26 #maximum of best tables to develop !!can't be bigger then 26!!
-n_mutations_hillcl = 5001 #number of mutations per table
-print_every_n_mutations_hillcl = 1000 #prints out all max values after n mutations
+n_mutations_hillcl = 101 #number of mutations per table
+print_every_n_mutations_hillcl = 10 #prints out all max values after n mutations
 #scores for mutations Hillclimber
 random_hillcl = {-100001: 'lala'} #dict of best random generated tables voor hillclimber
 best_scores_hillcl = {} #dict to mutate best n time tables in hillclimber
@@ -41,7 +41,8 @@ n_mutations_simann = 5001
 print_every_n_mutations_simann = 1000
 temperature = float(1.0)
 e = float(2.71828)
-alpha = float(1) - (float(1) / float(n_mutations_simann))
+alpha = 0.99951
+#alpha = pow((((0.0000025))),(2.0/float(n_mutations_simann)))
 #scores for mutations SimulatedAnnealing
 random_simann = {-100001: 'lala'} #dict of best random generated tables voor SimulatedAnnealing
 best_scores_simann = {} #dict to mutate best n time tables in SimulatedAnnealing
